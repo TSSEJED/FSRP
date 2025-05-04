@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalPagesEl = document.getElementById('total-pages');
     const pdfObject = document.getElementById('pdf-object');
     const mobileMessage = document.getElementById('mobile-message');
+    const androidMessage = document.getElementById('android-message');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const pdfFallbackContainer = document.getElementById('pdf-fallback-container');
     const desktopControls = document.getElementById('desktop-controls');
     const pdfControls = document.getElementById('pdf-controls');
     
@@ -33,45 +33,45 @@ document.addEventListener('DOMContentLoaded', function() {
                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     }
     
-    // Detect if device is mobile
-    function isMobile() {
-        return isAndroid() || isIOS() || window.innerWidth <= 768;
+    // Detect if device is mobile but not Android
+    function isMobileNotAndroid() {
+        return !isAndroid() && (isIOS() || window.innerWidth <= 768);
     }
     
-    // Handle mobile devices specifically for PDF viewing
-    function handleMobileDevice() {
-        if (isMobile()) {
-            mobileMessage.style.display = 'block';
-            
-            // For Android devices, which often have issues with embedded PDFs
-            if (isAndroid()) {
-                // Hide the PDF object and show the fallback container
-                if (pdfObject) {
-                    pdfObject.style.display = 'none';
-                }
-                if (pdfFallbackContainer) {
-                    pdfFallbackContainer.style.display = 'block';
-                }
-                if (pdfControls) {
-                    pdfControls.style.display = 'none';
-                }
-            }
-        } else {
-            mobileMessage.style.display = 'none';
-            if (pdfObject) {
-                pdfObject.style.display = 'block';
-            }
-            if (pdfFallbackContainer) {
-                pdfFallbackContainer.style.display = 'none';
-            }
-            if (pdfControls) {
-                pdfControls.style.display = 'block';
-            }
+    // Handle device-specific layouts
+    function handleDeviceLayout() {
+        // For Android devices
+        if (isAndroid()) {
+            // Show Android-specific message and hide everything else
+            if (androidMessage) androidMessage.style.display = 'block';
+            if (mobileMessage) mobileMessage.style.display = 'none';
+            if (desktopControls) desktopControls.style.display = 'none';
+            if (pdfObject) pdfObject.style.display = 'none';
+            if (pdfControls) pdfControls.style.display = 'none';
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
+        } 
+        // For other mobile devices
+        else if (isMobileNotAndroid()) {
+            // Show mobile message but still display PDF viewer
+            if (androidMessage) androidMessage.style.display = 'none';
+            if (mobileMessage) mobileMessage.style.display = 'block';
+            if (desktopControls) desktopControls.style.display = 'block';
+            if (pdfObject) pdfObject.style.display = 'block';
+            if (pdfControls) pdfControls.style.display = 'block';
+        } 
+        // For desktop devices
+        else {
+            // Show desktop layout
+            if (androidMessage) androidMessage.style.display = 'none';
+            if (mobileMessage) mobileMessage.style.display = 'none';
+            if (desktopControls) desktopControls.style.display = 'block';
+            if (pdfObject) pdfObject.style.display = 'block';
+            if (pdfControls) pdfControls.style.display = 'block';
         }
     }
     
-    // Initial check for mobile device
-    handleMobileDevice();
+    // Initial check for device layout
+    handleDeviceLayout();
     
     // Add watermark with creator info
     function addWatermark() {
@@ -101,13 +101,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call the function to add watermark
     addWatermark();
     
-    // Show loading indicator
-    loadingIndicator.style.display = 'block';
+    // Only show loading indicator if not on Android
+    if (!isAndroid() && loadingIndicator) {
+        loadingIndicator.style.display = 'block';
+    }
     
     // Hide loading indicator when PDF is loaded or on error
     if (pdfObject) {
         pdfObject.addEventListener('load', function() {
-            loadingIndicator.style.display = 'none';
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
             
             // Try to access PDF document to get page info
             try {
@@ -127,17 +129,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         pdfObject.addEventListener('error', function() {
-            loadingIndicator.style.display = 'none';
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
             
-            // Show fallback for PDF error
-            if (pdfFallbackContainer) {
-                pdfFallbackContainer.style.display = 'block';
-            }
-            if (pdfObject) {
-                pdfObject.style.display = 'none';
-            }
-            if (pdfControls) {
-                pdfControls.style.display = 'none';
+            // Show Android message if on Android device
+            if (isAndroid()) {
+                if (androidMessage) androidMessage.style.display = 'block';
+                if (pdfObject) pdfObject.style.display = 'none';
+                if (pdfControls) pdfControls.style.display = 'none';
             }
         });
     }
@@ -267,6 +265,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
+        // Don't process keyboard shortcuts on Android
+        if (isAndroid()) return;
+        
         // Prevent default behavior for these keys
         if ([37, 39, 187, 189, 107, 109].includes(e.keyCode) && e.target === document.body) {
             e.preventDefault();
@@ -298,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle window resize
     window.addEventListener('resize', function() {
-        handleMobileDevice();
+        handleDeviceLayout();
     });
     
     // Add console signature

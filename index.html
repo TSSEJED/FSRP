@@ -9,6 +9,7 @@
     <title>Staff Training Document | Sejed TRABELLSSI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
 </head>
 <body>
     <div class="container">
@@ -19,14 +20,38 @@
         </header>
         
         <div class="content">
-            <div class="mobile-message" id="mobile-message">
-                <p><strong>Note:</strong> We've detected you may be using a mobile device. For the best viewing experience, we recommend:</p>
+            <!-- Android-specific message -->
+            <div class="android-message" id="android-message" style="display: none;">
+                <div class="android-header">
+                    <i class="fas fa-android android-icon"></i>
+                    <h2>Android PDF Viewer</h2>
+                </div>
+                <p>We've optimized your experience for Android devices.</p>
+                <div class="android-options">
+                    <a href="Full staff training document.pdf" class="android-btn download-btn" download>
+                        <i class="fas fa-download"></i>
+                        <span>Download PDF</span>
+                        <small>Save to your device</small>
+                    </a>
+                    <a href="Full staff training document.pdf" class="android-btn view-btn" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Open in Browser</span>
+                        <small>View directly</small>
+                    </a>
+                </div>
+                <p class="android-note">Created by Sejed TRABELLSSI | <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+            </div>
+            
+            <!-- Regular mobile message (non-Android) -->
+            <div class="mobile-message" id="mobile-message" style="display: none;">
+                <p><strong>Note:</strong> For the best viewing experience on mobile devices, we recommend:</p>
                 <div class="mobile-options">
                     <a href="Full staff training document.pdf" class="mobile-btn" download><i class="fas fa-download"></i> Download PDF</a>
                     <a href="Full staff training document.pdf" class="mobile-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Open PDF Directly</a>
                 </div>
             </div>
             
+            <!-- Desktop controls - hidden on Android -->
             <div class="buttons" id="desktop-controls">
                 <a href="Full staff training document.pdf" class="btn btn-download" download><i class="fas fa-download"></i> Download PDF</a>
                 <button class="btn" id="fullscreen-btn"><i class="fas fa-expand"></i> Fullscreen</button>
@@ -40,18 +65,7 @@
                 <p>Loading PDF document...</p>
             </div>
             
-            <div id="pdf-fallback-container" class="pdf-fallback-container" style="display: none;">
-                <div class="fallback-message">
-                    <h3>Mobile PDF Viewer</h3>
-                    <p>Your device may not support embedded PDFs. Please use one of these options:</p>
-                    <div class="fallback-buttons">
-                        <a href="Full staff training document.pdf" class="fallback-btn" download><i class="fas fa-download"></i> Download PDF</a>
-                        <a href="Full staff training document.pdf" class="fallback-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Open in Browser</a>
-                    </div>
-                    <p class="fallback-note">Created by Sejed TRABELLSSI</p>
-                </div>
-            </div>
-            
+            <!-- PDF viewer - hidden on Android -->
             <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
                 <div class="fallback-message">
                     <h3>PDF Viewer Not Available</h3>
@@ -60,6 +74,7 @@
                 </div>
             </object>
             
+            <!-- PDF controls - hidden on Android -->
             <div class="pdf-controls" id="pdf-controls">
                 <div class="page-navigation">
                     <button id="prev-page" class="nav-btn"><i class="fas fa-chevron-left"></i> Previous</button>

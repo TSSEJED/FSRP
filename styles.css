@@ -16,6 +16,8 @@
     --success-color: #28a745;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
+    --android-color: #3ddc84;
+    --android-dark: #219653;
     --border-radius: 8px;
     --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     --transition: all 0.3s ease;
@@ -46,6 +48,10 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
     font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
 }
 
 p {
@@ -146,55 +152,126 @@ header p {
     transition: var(--transition);
 }
 
-/* PDF Fallback Container for Mobile */
-.pdf-fallback-container {
-    width: 100%;
-    margin: 20px 0;
+/* Android-specific Styles */
+.android-message {
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
     border-radius: var(--border-radius);
+    padding: 25px 20px;
+    margin-bottom: 25px;
     box-shadow: var(--box-shadow);
-    background-color: #f8f9fa;
-    padding: 30px 20px;
     text-align: center;
+    animation: fadeIn 0.5s ease-out;
 }
 
-.fallback-buttons {
+.android-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 12px;
+}
+
+.android-icon {
+    font-size: 2.5rem;
+    color: var(--android-color);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.android-header h2 {
+    margin: 0;
+    color: var(--android-dark);
+    font-weight: 700;
+}
+
+.android-options {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin: 20px 0;
+    margin: 25px 0;
 }
 
-.fallback-btn {
-    display: inline-flex;
+.android-btn {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary-color);
-    color: var(--light-text);
-    padding: 15px 20px;
+    background-color: white;
+    color: var(--text-color);
+    padding: 20px;
     border-radius: var(--border-radius);
     text-decoration: none;
-    font-weight: 500;
     transition: var(--transition);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
 }
 
-.fallback-btn:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.android-btn i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    transition: var(--transition);
+}
+
+.android-btn span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.android-btn small {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.android-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: transparent;
+    transition: var(--transition);
+}
+
+.android-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     text-decoration: none;
-    color: white;
+    color: var(--text-color);
 }
 
-.fallback-btn i {
-    margin-right: 10px;
-    font-size: 1.2em;
+.android-btn:hover i {
+    transform: scale(1.1);
 }
 
-.fallback-note {
+.download-btn i {
+    color: var(--success-color);
+}
+
+.download-btn:hover::after {
+    background-color: var(--success-color);
+}
+
+.view-btn i {
+    color: var(--primary-color);
+}
+
+.view-btn:hover::after {
+    background-color: var(--primary-color);
+}
+
+.android-note {
     margin-top: 20px;
     font-size: 0.9rem;
-    color: #666;
+    color: #6c757d;
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+}
+
+.android-note a {
+    font-weight: 600;
 }
 
 /* PDF Controls */
@@ -538,10 +615,6 @@ footer p:last-child {
         padding: 20px;
     }
     
-    .mobile-message {
-        display: block;
-    }
-    
     .pdf-container {
         height: 60vh;
     }
@@ -573,6 +646,41 @@ footer p:last-child {
     
     .nav-btn {
         flex: 1;
+    }
+    
+    /* Android-specific mobile styles */
+    .android-message {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .android-header {
+        margin-bottom: 12px;
+    }
+    
+    .android-icon {
+        font-size: 2.2rem;
+    }
+    
+    .android-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .android-options {
+        margin: 20px 0;
+    }
+    
+    .android-btn {
+        padding: 15px;
+    }
+    
+    .android-btn i {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+    
+    .android-btn span {
+        font-size: 1.1rem;
     }
 }
 
@@ -633,6 +741,41 @@ footer p:last-child {
     .mobile-btn {
         padding: 12px;
     }
+    
+    /* Android-specific small phone styles */
+    .android-message {
+        padding: 15px 10px;
+    }
+    
+    .android-header {
+        gap: 8px;
+    }
+    
+    .android-icon {
+        font-size: 2rem;
+    }
+    
+    .android-header h2 {
+        font-size: 1.6rem;
+    }
+    
+    .android-btn {
+        padding: 15px 10px;
+    }
+    
+    .android-btn i {
+        font-size: 1.6rem;
+    }
+    
+    .android-btn span {
+        font-size: 1rem;
+    }
+    
+    .android-note {
+        font-size: 0.8rem;
+        padding-top: 12px;
+        margin-top: 15px;
+    }
 }
 
 /* Dark Mode Support */
@@ -685,12 +828,24 @@ footer p:last-child {
         color: #e0e0e0;
     }
     
-    .pdf-fallback-container {
-        background-color: #2d2d2d;
+    .android-message {
+        background: linear-gradient(to bottom, #2d2d2d, #1e1e1e);
+        border: 1px solid #333;
     }
     
-    .fallback-note {
+    .android-header h2 {
+        color: var(--android-color);
+    }
+    
+    .android-btn {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    
+    .android-note {
         color: #aaa;
+        border-top-color: #444;
     }
     
     a {
