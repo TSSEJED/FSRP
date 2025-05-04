@@ -172,6 +172,61 @@
             font-size: 1.2rem;
         }
         
+        /* Discord login button */
+        .discord-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #5865F2;
+            color: white;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .discord-btn:hover {
+            background: #4752C4;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3);
+        }
+        
+        .discord-btn i {
+            font-size: 1.3rem;
+        }
+        
+        .login-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-color-secondary);
+        }
+        
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-divider span {
+            padding: 0 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .login-divider::before,
+            .login-divider::after {
+                border-bottom-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+        
         @media (prefers-color-scheme: dark) {
             .login-card {
                 background: var(--card-bg-dark);
@@ -225,6 +280,14 @@
                     <i class="fas fa-lock"></i>
                     <h1>Secure Access</h1>
                     <p>Enter the passcode to access the Staff Warning Policy Document</p>
+                </div>
+                
+                <a href="discord_login.html?destination=SWPD.html" class="discord-btn" id="discord-login-btn">
+                    <i class="fab fa-discord"></i> Login with Discord
+                </a>
+                
+                <div class="login-divider">
+                    <span>OR</span>
                 </div>
                 
                 <div class="error-message" id="error-message">
