@@ -9,14 +9,20 @@
     <title>Staff Training Document | Sejed TRABELLSSI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-file-pdf"></i> Staff Training Document</h1>
-            <p>Full staff training document - Digital Version</p>
-            <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Staff Training Document</h1>
+                    <p>Full staff training document - Digital Version</p>
+                </div>
+                <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            </div>
         </header>
         
         <div class="content">
@@ -51,35 +57,108 @@
                 </div>
             </div>
             
-            <!-- Desktop controls - hidden on Android -->
-            <div class="buttons" id="desktop-controls">
-                <a href="Full staff training document.pdf" class="btn btn-download" download><i class="fas fa-download"></i> Download PDF</a>
-                <button class="btn" id="fullscreen-btn"><i class="fas fa-expand"></i> Fullscreen</button>
-                <button class="btn" id="print-btn"><i class="fas fa-print"></i> Print</button>
-                <button class="btn" id="zoom-in-btn"><i class="fas fa-search-plus"></i> Zoom In</button>
-                <button class="btn" id="zoom-out-btn"><i class="fas fa-search-minus"></i> Zoom Out</button>
-            </div>
-            
-            <div class="loading-indicator" id="loading-indicator">
-                <div class="spinner"></div>
-                <p>Loading PDF document...</p>
-            </div>
-            
-            <!-- PDF viewer - hidden on Android -->
-            <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
-                <div class="fallback-message">
-                    <h3>PDF Viewer Not Available</h3>
-                    <p>Your browser doesn't support embedded PDFs or the PDF failed to load.</p>
-                    <p>Please <a href="Full staff training document.pdf" download>download the PDF</a> to view it.</p>
+            <!-- Desktop experience -->
+            <div class="desktop-experience" id="desktop-experience">
+                <!-- Sidebar with controls -->
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-cog"></i> Document Controls</h3>
+                        <div class="control-group">
+                            <button class="control-btn" id="fullscreen-btn" title="View in fullscreen">
+                                <i class="fas fa-expand"></i>
+                                <span>Fullscreen</span>
+                            </button>
+                            <button class="control-btn" id="print-btn" title="Print document">
+                                <i class="fas fa-print"></i>
+                                <span>Print</span>
+                            </button>
+                            <a href="Full staff training document.pdf" class="control-btn" download title="Download PDF">
+                                <i class="fas fa-download"></i>
+                                <span>Download</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-search"></i> Zoom Controls</h3>
+                        <div class="control-group">
+                            <button class="control-btn" id="zoom-in-btn" title="Zoom in">
+                                <i class="fas fa-search-plus"></i>
+                                <span>Zoom In</span>
+                            </button>
+                            <button class="control-btn" id="zoom-out-btn" title="Zoom out">
+                                <i class="fas fa-search-minus"></i>
+                                <span>Zoom Out</span>
+                            </button>
+                            <button class="control-btn" id="zoom-reset-btn" title="Reset zoom">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-file-alt"></i> Page Navigation</h3>
+                        <div class="page-info">
+                            <span>Page <span id="current-page">-</span> of <span id="total-pages">-</span></span>
+                        </div>
+                        <div class="control-group">
+                            <button class="control-btn" id="prev-page" title="Previous page">
+                                <i class="fas fa-chevron-left"></i>
+                                <span>Previous</span>
+                            </button>
+                            <button class="control-btn" id="next-page" title="Next page">
+                                <i class="fas fa-chevron-right"></i>
+                                <span>Next</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-keyboard"></i> Keyboard Shortcuts</h3>
+                        <div class="shortcuts">
+                            <div class="shortcut">
+                                <span class="key">←</span> Previous Page
+                            </div>
+                            <div class="shortcut">
+                                <span class="key">→</span> Next Page
+                            </div>
+                            <div class="shortcut">
+                                <span class="key">+</span> Zoom In
+                            </div>
+                            <div class="shortcut">
+                                <span class="key">-</span> Zoom Out
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section author-info">
+                        <div class="author-photo">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="author-details">
+                            <h3>Sejed TRABELLSSI</h3>
+                            <a href="https://sejed.pages.dev" target="_blank" class="author-website">
+                                <i class="fas fa-globe"></i> sejed.pages.dev
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </object>
-            
-            <!-- PDF controls - hidden on Android -->
-            <div class="pdf-controls" id="pdf-controls">
-                <div class="page-navigation">
-                    <button id="prev-page" class="nav-btn"><i class="fas fa-chevron-left"></i> Previous</button>
-                    <span id="page-info">Page <span id="current-page">-</span> of <span id="total-pages">-</span></span>
-                    <button id="next-page" class="nav-btn">Next <i class="fas fa-chevron-right"></i></button>
+                
+                <!-- Main PDF viewer area -->
+                <div class="main-content">
+                    <div class="loading-indicator" id="loading-indicator">
+                        <div class="spinner"></div>
+                        <p>Loading PDF document...</p>
+                    </div>
+                    
+                    <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
+                        <div class="fallback-message">
+                            <h3>PDF Viewer Not Available</h3>
+                            <p>Your browser doesn't support embedded PDFs or the PDF failed to load.</p>
+                            <p>Please <a href="Full staff training document.pdf" download>download the PDF</a> to view it.</p>
+                        </div>
+                    </object>
                 </div>
             </div>
         </div>
