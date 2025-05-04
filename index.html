@@ -3,175 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Staff Training Document Viewer - Made by Sejed TRABELLSSI & only available for trainers.">
-    <meta name="theme-color" content="#3a6ea5">
+    <meta name="description" content="Document Portal - Made by Sejed TRABELLSSI & only available for trainers.">
+    <meta name="theme-color" content="#4361ee">
     <meta name="author" content="Sejed TRABELLSSI">
-    <title>Staff Training Document | Sejed TRABELLSSI</title>
+    <title>Document Portal | Sejed TRABELLSSI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Landing page specific styles */
+        .landing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .landing-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-primary);
+            filter: blur(120px);
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .landing-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 250px;
+            height: 250px;
+            background: var(--gradient-secondary);
+            filter: blur(100px);
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .document-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            justify-content: center;
+            margin-top: 4rem;
+        }
+        
+        .document-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            width: 350px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .document-card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--box-shadow-hover);
+        }
+        
+        .card-header {
+            padding: 2.5rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            text-align: center;
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .card-header i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header h2 {
+            position: relative;
+            z-index: 1;
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin-bottom: 0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-body {
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+        
+        .card-body p {
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        
+        .card-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0.9rem 1.8rem;
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .card-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+        }
+        
+        .card-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+        
+        .card-btn i {
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+        
+        .card-btn:hover i {
+            transform: scale(1.2);
+        }
+        
+        .landing-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .landing-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .landing-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+        
+        .landing-header p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius-lg);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .document-card {
+                background: var(--card-bg-dark);
+                border-color: rgba(255, 255, 255, 0.05);
+            }
+            
+            .card-body {
+                background: linear-gradient(180deg, rgba(45, 55, 72, 0.9) 0%, rgba(45, 55, 72, 1) 100%);
+            }
+            
+            .card-body p {
+                color: rgba(255, 255, 255, 0.9);
+            }
+            
+            .card-badge {
+                background: rgba(0, 0, 0, 0.3);
+                color: white;
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .document-cards {
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+            }
+            
+            .document-card {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .landing-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .landing-header p {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
+            
+            .landing-container {
+                padding: 2rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .landing-header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-header i {
+                font-size: 3.5rem;
+            }
+            
+            .card-header h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-file-pdf"></i>
+                    <i class="fas fa-folder-open"></i>
                 </div>
                 <div class="header-text">
-                    <h1>Staff Training Document</h1>
-                    <p>Full staff training document - Digital Version</p>
+                    <h1>Document Portal</h1>
+                    <p>Access important documents - Digital Version</p>
                 </div>
                 <div class="author-badge">Created by Sejed TRABELLSSI</div>
             </div>
         </header>
         
-        <div class="content">
-            <!-- Android-specific message -->
-            <div class="android-message" id="android-message" style="display: none;">
-                <div class="android-header">
-                    <i class="fas fa-android android-icon"></i>
-                    <h2>Android PDF Viewer</h2>
-                </div>
-                <p>We've optimized your experience for Android devices.</p>
-                <div class="android-options">
-                    <a href="Full staff training document.pdf" class="android-btn download-btn" download>
-                        <i class="fas fa-download"></i>
-                        <span>Download PDF</span>
-                        <small>Save to your device</small>
-                    </a>
-                    <a href="Full staff training document.pdf" class="android-btn view-btn" target="_blank">
-                        <i class="fas fa-external-link-alt"></i>
-                        <span>Open in Browser</span>
-                        <small>View directly</small>
-                    </a>
-                </div>
-                <p class="android-note">Created by Sejed TRABELLSSI | <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+        <div class="landing-container">
+            <div class="landing-header">
+                <h1>Welcome to the Document Portal</h1>
+                <p>Select one of the documents below to view its digital version. All documents are optimized for both PC and Android devices.</p>
             </div>
             
-            <!-- Regular mobile message (non-Android) -->
-            <div class="mobile-message" id="mobile-message" style="display: none;">
-                <p><strong>Note:</strong> For the best viewing experience on mobile devices, we recommend:</p>
-                <div class="mobile-options">
-                    <a href="Full staff training document.pdf" class="mobile-btn" download><i class="fas fa-download"></i> Download PDF</a>
-                    <a href="Full staff training document.pdf" class="mobile-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Open PDF Directly</a>
-                </div>
-            </div>
-            
-            <!-- Desktop experience -->
-            <div class="desktop-experience" id="desktop-experience">
-                <!-- Sidebar with controls -->
-                <div class="sidebar">
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-cog"></i> Document Controls</h3>
-                        <div class="control-group">
-                            <button class="control-btn" id="fullscreen-btn" title="View in fullscreen">
-                                <i class="fas fa-expand"></i>
-                                <span>Fullscreen</span>
-                            </button>
-                            <button class="control-btn" id="print-btn" title="Print document">
-                                <i class="fas fa-print"></i>
-                                <span>Print</span>
-                            </button>
-                            <a href="Full staff training document.pdf" class="control-btn" download title="Download PDF">
-                                <i class="fas fa-download"></i>
-                                <span>Download</span>
-                            </a>
-                        </div>
+            <div class="document-cards">
+                <!-- Staff Training Document Card -->
+                <div class="document-card">
+                    <div class="card-badge">Training</div>
+                    <div class="card-header">
+                        <i class="fas fa-book"></i>
+                        <h2>Staff Training Document</h2>
                     </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-search"></i> Zoom Controls</h3>
-                        <div class="control-group">
-                            <button class="control-btn" id="zoom-in-btn" title="Zoom in">
-                                <i class="fas fa-search-plus"></i>
-                                <span>Zoom In</span>
-                            </button>
-                            <button class="control-btn" id="zoom-out-btn" title="Zoom out">
-                                <i class="fas fa-search-minus"></i>
-                                <span>Zoom Out</span>
-                            </button>
-                            <button class="control-btn" id="zoom-reset-btn" title="Reset zoom">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Reset</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-file-alt"></i> Page Navigation</h3>
-                        <div class="page-info">
-                            <span>Page <span id="current-page">-</span> of <span id="total-pages">-</span></span>
-                        </div>
-                        <div class="control-group">
-                            <button class="control-btn" id="prev-page" title="Previous page">
-                                <i class="fas fa-chevron-left"></i>
-                                <span>Previous</span>
-                            </button>
-                            <button class="control-btn" id="next-page" title="Next page">
-                                <i class="fas fa-chevron-right"></i>
-                                <span>Next</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-keyboard"></i> Keyboard Shortcuts</h3>
-                        <div class="shortcuts">
-                            <div class="shortcut">
-                                <span class="key">←</span> Previous Page
-                            </div>
-                            <div class="shortcut">
-                                <span class="key">→</span> Next Page
-                            </div>
-                            <div class="shortcut">
-                                <span class="key">+</span> Zoom In
-                            </div>
-                            <div class="shortcut">
-                                <span class="key">-</span> Zoom Out
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-section author-info">
-                        <div class="author-photo">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <div class="author-details">
-                            <h3>Sejed TRABELLSSI</h3>
-                            <a href="https://sejed.pages.dev" target="_blank" class="author-website">
-                                <i class="fas fa-globe"></i> sejed.pages.dev
-                            </a>
-                        </div>
+                    <div class="card-body">
+                        <p>Access the complete staff training document with all procedures, guidelines, and training materials.</p>
+                        <a href="STD.html" class="card-btn">
+                            <i class="fas fa-eye"></i> View Document
+                        </a>
                     </div>
                 </div>
                 
-                <!-- Main PDF viewer area -->
-                <div class="main-content">
-                    <div class="loading-indicator" id="loading-indicator">
-                        <div class="spinner"></div>
-                        <p>Loading PDF document...</p>
+                <!-- Staff Warning Policy Document Card -->
+                <div class="document-card">
+                    <div class="card-badge">Policy</div>
+                    <div class="card-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Staff Warning Policy</h2>
                     </div>
-                    
-                    <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
-                        <div class="fallback-message">
-                            <h3>PDF Viewer Not Available</h3>
-                            <p>Your browser doesn't support embedded PDFs or the PDF failed to load.</p>
-                            <p>Please <a href="Full staff training document.pdf" download>download the PDF</a> to view it.</p>
-                        </div>
-                    </object>
+                    <div class="card-body">
+                        <p>Access the staff warning policy document with guidelines on warnings, disciplinary procedures, and policies.</p>
+                        <a href="SWPD.html" class="card-btn">
+                            <i class="fas fa-eye"></i> View Document
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         
         <footer>
             <div class="footer-content">
-                <p>&copy; 2025 - Sejed TRABELLSSI | Staff Training Document</p>
+                <p>&copy; 2025 - Sejed TRABELLSSI | Document Portal</p>
                 <p>Last updated: May 4, 2025</p>
-                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev <i class="fas fa-external-link-alt"></i></a></p>
             </div>
         </footer>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Staff Training Document Viewer - Made by Sejed TRABELLSSI & only available for trainers.">
+    <meta name="theme-color" content="#3a6ea5">
+    <meta name="author" content="Sejed TRABELLSSI">
+    <title>Staff Training Document | Sejed TRABELLSSI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Staff Training Document</h1>
+                    <p>Full staff training document - Digital Version</p>
+                </div>
+                <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            </div>
+        </header>
+        
+        <div class="content">
+            <!-- Android-specific message -->
+            <div class="android-message" id="android-message" style="display: none;">
+                <div class="android-header">
+                    <i class="fas fa-android android-icon"></i>
+                    <h2>Android PDF Viewer</h2>
+                </div>
+                <p>We've optimized your experience for Android devices.</p>
+                <div class="android-options">
+                    <a href="Full staff training document.pdf" class="android-btn download-btn" download>
+                        <i class="fas fa-download"></i>
+                        <span>Download PDF</span>
+                        <small>Save to your device</small>
+                    </a>
+                    <a href="Full staff training document.pdf" class="android-btn view-btn" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Open in Browser</span>
+                        <small>View directly</small>
+                    </a>
+                </div>
+                <p class="android-note">Created by Sejed TRABELLSSI | <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+            </div>
+            
+            <!-- Regular mobile message (non-Android) -->
+            <div class="mobile-message" id="mobile-message" style="display: none;">
+                <p><strong>Note:</strong> For the best viewing experience on mobile devices, we recommend:</p>
+                <div class="mobile-options">
+                    <a href="Full staff training document.pdf" class="mobile-btn" download><i class="fas fa-download"></i> Download PDF</a>
+                    <a href="Full staff training document.pdf" class="mobile-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Open PDF Directly</a>
+                </div>
+            </div>
+            
+            <!-- Desktop experience -->
+            <div class="desktop-experience" id="desktop-experience">
+                <!-- Sidebar with controls -->
+                <div class="sidebar">
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-navigation"></i> Navigation</h3>
+                        <div class="control-group">
+                            <a href="index.html" class="control-btn" title="Back to Home">
+                                <i class="fas fa-home"></i>
+                                <span>Home</span>
+                            </a>
+                            <a href="SWPD.html" class="control-btn" title="Go to Staff Warning Policy">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Warning Policy</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section author-info">
+                        <div class="author-photo">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="author-details">
+                            <h3>Sejed TRABELLSSI</h3>
+                            <a href="https://sejed.pages.dev" target="_blank" class="author-website">
+                                <i class="fas fa-globe"></i> sejed.pages.dev
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main PDF viewer area -->
+                <div class="main-content">
+                    <div class="loading-indicator" id="loading-indicator">
+                        <div class="spinner"></div>
+                        <p>Loading PDF document...</p>
+                    </div>
+                    
+                    <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
+                        <div class="fallback-message">
+                            <h3>PDF Viewer Not Available</h3>
+                            <p>Your browser doesn't support embedded PDFs or the PDF failed to load.</p>
+                            <p>Please <a href="Full staff training document.pdf" download>download the PDF</a> to view it.</p>
+                        </div>
+                    </object>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 - Sejed TRABELLSSI | Staff Training Document</p>
+                <p>Last updated: May 4, 2025</p>
+                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
