@@ -10,7 +10,7 @@
 // Discord OAuth2 Configuration
 const DISCORD_CONFIG = {
     clientId: '1368699324623749171', // Your Discord application client ID
-    redirectUri: window.location.origin + '/discord_callback.html',
+    redirectUri: 'https://florida-state-roleplay.pages.dev/discord_callback.html', // Live website URL
     scope: 'identify guilds.members.read',
     guildId: '1271521823259099138', // Your Discord server ID
     trainerRoleId: '1366799139031089152', // Your Trainer role ID
