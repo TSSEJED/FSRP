@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentPageEl = document.getElementById('current-page');
     const totalPagesEl = document.getElementById('total-pages');
     const pdfObject = document.getElementById('pdf-object');
-    const mobileMessage = document.querySelector('.mobile-message');
+    const mobileMessage = document.getElementById('mobile-message');
     const loadingIndicator = document.getElementById('loading-indicator');
+    const pdfFallbackContainer = document.getElementById('pdf-fallback-container');
+    const desktopControls = document.getElementById('desktop-controls');
+    const pdfControls = document.getElementById('pdf-controls');
     
     // Variables for PDF viewer
     let currentScale = 1;
@@ -19,24 +22,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxScale = 3;
     const minScale = 0.5;
     
+    // Detect if device is Android
+    function isAndroid() {
+        return /Android/i.test(navigator.userAgent);
+    }
+    
+    // Detect if device is iOS
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+    
+    // Detect if device is mobile
+    function isMobile() {
+        return isAndroid() || isIOS() || window.innerWidth <= 768;
+    }
+    
+    // Handle mobile devices specifically for PDF viewing
+    function handleMobileDevice() {
+        if (isMobile()) {
+            mobileMessage.style.display = 'block';
+            
+            // For Android devices, which often have issues with embedded PDFs
+            if (isAndroid()) {
+                // Hide the PDF object and show the fallback container
+                if (pdfObject) {
+                    pdfObject.style.display = 'none';
+                }
+                if (pdfFallbackContainer) {
+                    pdfFallbackContainer.style.display = 'block';
+                }
+                if (pdfControls) {
+                    pdfControls.style.display = 'none';
+                }
+            }
+        } else {
+            mobileMessage.style.display = 'none';
+            if (pdfObject) {
+                pdfObject.style.display = 'block';
+            }
+            if (pdfFallbackContainer) {
+                pdfFallbackContainer.style.display = 'none';
+            }
+            if (pdfControls) {
+                pdfControls.style.display = 'block';
+            }
+        }
+    }
+    
+    // Initial check for mobile device
+    handleMobileDevice();
+    
     // Add watermark with creator info
     function addWatermark() {
         const watermark = document.createElement('div');
         watermark.className = 'watermark';
         watermark.innerHTML = `Created by Sejed TRABELLSSI | <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a>`;
-        
-        // Style the watermark
-        watermark.style.position = 'fixed';
-        watermark.style.bottom = '5px';
-        watermark.style.right = '10px';
-        watermark.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        watermark.style.color = 'white';
-        watermark.style.padding = '5px 10px';
-        watermark.style.borderRadius = '4px';
-        watermark.style.fontSize = '12px';
-        watermark.style.zIndex = '1000';
-        watermark.style.opacity = '0.7';
-        watermark.style.transition = 'opacity 0.3s';
         
         // Style the link
         const link = watermark.querySelector('a');
@@ -59,18 +100,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Call the function to add watermark
     addWatermark();
-    
-    // Show mobile message on small screens
-    function checkMobileView() {
-        if (window.innerWidth <= 768) {
-            mobileMessage.style.display = 'block';
-        } else {
-            mobileMessage.style.display = 'none';
-        }
-    }
-    
-    // Initial check for mobile view
-    checkMobileView();
     
     // Show loading indicator
     loadingIndicator.style.display = 'block';
@@ -99,7 +128,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         pdfObject.addEventListener('error', function() {
             loadingIndicator.style.display = 'none';
-            // The fallback message will be shown automatically by the object tag
+            
+            // Show fallback for PDF error
+            if (pdfFallbackContainer) {
+                pdfFallbackContainer.style.display = 'block';
+            }
+            if (pdfObject) {
+                pdfObject.style.display = 'none';
+            }
+            if (pdfControls) {
+                pdfControls.style.display = 'none';
+            }
         });
     }
     
@@ -259,25 +298,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle window resize
     window.addEventListener('resize', function() {
-        checkMobileView();
+        handleMobileDevice();
     });
-    
-    // Add fallback for browsers that don't support embedded PDFs
-    if (pdfObject) {
-        pdfObject.addEventListener('error', function() {
-            const fallbackMessage = document.createElement('div');
-            fallbackMessage.className = 'fallback-message';
-            fallbackMessage.innerHTML = `
-                <div style="text-align: center; padding: 30px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 20px 0;">
-                    <h3>PDF Viewer Not Available</h3>
-                    <p>Your browser doesn't support embedded PDFs or the PDF failed to load.</p>
-                    <p>Please <a href="Full staff training document.pdf" download style="color: #721c24; font-weight: bold;">download the PDF</a> to view it.</p>
-                    <p><small>Created by Sejed TRABELLSSI</small></p>
-                </div>
-            `;
-            pdfObject.parentNode.replaceChild(fallbackMessage, pdfObject);
-        });
-    }
     
     // Add console signature
     console.log('%c Created by Sejed TRABELLSSI | https://sejed.pages.dev ', 

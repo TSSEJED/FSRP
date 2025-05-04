@@ -16,16 +16,18 @@
             <h1><i class="fas fa-file-pdf"></i> Staff Training Document</h1>
             <p>Full staff training document - Digital Version</p>
             <div class="author-badge">Created by Sejed TRABELLSSI</div>
-            <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
-
         </header>
         
         <div class="content">
-            <div class="mobile-message">
-                <p><strong>Note:</strong> For the best viewing experience on mobile devices, we recommend downloading the PDF file.</p>
+            <div class="mobile-message" id="mobile-message">
+                <p><strong>Note:</strong> We've detected you may be using a mobile device. For the best viewing experience, we recommend:</p>
+                <div class="mobile-options">
+                    <a href="Full staff training document.pdf" class="mobile-btn" download><i class="fas fa-download"></i> Download PDF</a>
+                    <a href="Full staff training document.pdf" class="mobile-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Open PDF Directly</a>
+                </div>
             </div>
             
-            <div class="buttons">
+            <div class="buttons" id="desktop-controls">
                 <a href="Full staff training document.pdf" class="btn btn-download" download><i class="fas fa-download"></i> Download PDF</a>
                 <button class="btn" id="fullscreen-btn"><i class="fas fa-expand"></i> Fullscreen</button>
                 <button class="btn" id="print-btn"><i class="fas fa-print"></i> Print</button>
@@ -38,6 +40,18 @@
                 <p>Loading PDF document...</p>
             </div>
             
+            <div id="pdf-fallback-container" class="pdf-fallback-container" style="display: none;">
+                <div class="fallback-message">
+                    <h3>Mobile PDF Viewer</h3>
+                    <p>Your device may not support embedded PDFs. Please use one of these options:</p>
+                    <div class="fallback-buttons">
+                        <a href="Full staff training document.pdf" class="fallback-btn" download><i class="fas fa-download"></i> Download PDF</a>
+                        <a href="Full staff training document.pdf" class="fallback-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Open in Browser</a>
+                    </div>
+                    <p class="fallback-note">Created by Sejed TRABELLSSI</p>
+                </div>
+            </div>
+            
             <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
                 <div class="fallback-message">
                     <h3>PDF Viewer Not Available</h3>
@@ -46,7 +60,7 @@
                 </div>
             </object>
             
-            <div class="pdf-controls">
+            <div class="pdf-controls" id="pdf-controls">
                 <div class="page-navigation">
                     <button id="prev-page" class="nav-btn"><i class="fas fa-chevron-left"></i> Previous</button>
                     <span id="page-info">Page <span id="current-page">-</span> of <span id="total-pages">-</span></span>
