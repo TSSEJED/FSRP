@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Florida State Roleplay - Coming Soon">
+    <meta name="theme-color" content="#4361ee">
+    <meta name="author" content="Sejed TRABELLSSI">
+    <title>Coming Soon | Florida State Roleplay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --text-color: #333;
+            --text-color-secondary: #666;
+            --background-color: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg-dark: rgba(30, 41, 59, 0.9);
+            --text-color-dark: #e2e8f0;
+            --text-color-secondary-dark: #94a3b8;
+            --background-color-dark: #0f172a;
+            --gradient-primary: linear-gradient(135deg, #4361ee, #3a0ca3);
+            --gradient-secondary: linear-gradient(135deg, #4cc9f0, #4361ee);
+            --border-radius: 10px;
+            --border-radius-lg: 20px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at top right, rgba(76, 201, 240, 0.1) 0%, transparent 70%),
+                radial-gradient(circle at bottom left, rgba(67, 97, 238, 0.1) 0%, transparent 70%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            padding: 2rem 0;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-right: 1rem;
+        }
+        
+        .header-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            color: var(--text-color);
+        }
+        
+        .header-text p {
+            font-size: 1rem;
+            color: var(--text-color-secondary);
+        }
+        
+        .author-badge {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .coming-soon-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .coming-soon-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .coming-soon-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: var(--gradient-primary);
+            filter: blur(80px);
+            opacity: 0.2;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .coming-soon-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .coming-soon-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .coming-soon-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-color-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .access-form {
+            margin-top: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+            text-align: left;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .access-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .access-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .access-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            color: #e74c3c;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: flex;
+        }
+        
+        .error-message i {
+            font-size: 1.2rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .social-link {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .social-link:hover {
+            transform: translateY(-5px);
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        footer {
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-color-secondary);
+        }
+        
+        .website-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .website-link a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: var(--background-color-dark);
+                color: var(--text-color-dark);
+            }
+            
+            .header-text h1, .form-group label {
+                color: var(--text-color-dark);
+            }
+            
+            .header-text p {
+                color: var(--text-color-secondary-dark);
+            }
+            
+            .coming-soon-card {
+                background: var(--card-bg-dark);
+                border-color: rgba(255, 255, 255, 0.05);
+            }
+            
+            .coming-soon-subtitle {
+                color: var(--text-color-secondary-dark);
+            }
+            
+            .form-input {
+                background: rgba(30, 41, 59, 0.8);
+                border-color: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+            
+            .social-link {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .footer-content {
+                color: var(--text-color-secondary-dark);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .author-badge {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: 1rem;
+            }
+            
+            .coming-soon-card {
+                padding: 2rem 1.5rem;
+                max-width: 100%;
+            }
+            
+            .coming-soon-title {
+                font-size: 2rem;
+            }
+            
+            .coming-soon-icon {
+                font-size: 4rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .coming-soon-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .form-input {
+                padding: 0.8rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .access-btn {
+                padding: 0.8rem;
+            }
+            
+            .social-links {
+                gap: 1rem;
+            }
+            
+            .social-link {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* Additional mobile optimizations for smaller screens */
+        @media (max-width: 480px) {
+            .header-content .logo {
+                font-size: 2rem;
+            }
+            
+            .header-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .coming-soon-title {
+                font-size: 1.8rem;
+            }
+            
+            .coming-soon-icon {
+                font-size: 3.5rem;
+            }
+            
+            .coming-soon-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .footer-content {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Florida State Roleplay</h1>
+                    <p>Official Document Portal</p>
+                </div>
+                <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            </div>
+        </header>
+        
+        <div class="coming-soon-container">
+            <div class="coming-soon-card">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h1 class="coming-soon-title">Coming Soon</h1>
+                <p class="coming-soon-subtitle">We're working hard to bring you the best roleplay experience. Our document portal will be available soon.</p>
+                
+                <div class="error-message" id="error-message">
+                    <i class="fas fa-exclamation-circle"></i> Incorrect access code. Please try again.
+                </div>
+                
+                <form class="access-form" id="access-form">
+                    <div class="form-group">
+                        <label for="access-code">Special Access Code</label>
+                        <input type="password" id="access-code" class="form-input" placeholder="Enter access code" required>
+                    </div>
+                    
+                    <button type="submit" class="access-btn">
+                        <i class="fas fa-unlock-alt"></i> Access Portal
+                    </button>
+                </form>
+                
+                <div class="social-links">
+                    <a href="https://discord.gg/your-discord" class="social-link" target="_blank">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://policeroleplay.community/join/AebBj" class="social-link" target="_blank">
+                        <i class="fas fa-gamepad"></i>
+                    </a>
+                    <a href="https://youtube.com/your-channel" class="social-link" target="_blank">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 - Florida State Roleplay | All Rights Reserved</p>
+                <p>Last updated: May 4, 2025</p>
+                <p class="website-link">Created by: <a href="https://sejed.pages.dev" target="_blank">Sejed TRABELLSSI <i class="fas fa-external-link-alt"></i></a></p>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user has already accessed the site
+            if (localStorage.getItem('fsrp_access') === 'granted') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const accessForm = document.getElementById('access-form');
+            const errorMessage = document.getElementById('error-message');
+            
+            accessForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const accessCode = document.getElementById('access-code').value.trim().toLowerCase();
+                const correctCode = 'sejed'; // Case-insensitive access code
+                
+                if (accessCode === correctCode) {
+                    // Grant access and store in localStorage
+                    localStorage.setItem('fsrp_access', 'granted');
+                    
+                    // Redirect to the main site
+                    window.location.href = 'index.html';
+                } else {
+                    // Show error message
+                    errorMessage.classList.add('show');
+                    
+                    // Clear the input field
+                    document.getElementById('access-code').value = '';
+                    
+                    // Focus on the input field
+                    document.getElementById('access-code').focus();
+                    
+                    // Remove the error message after 3 seconds
+                    setTimeout(function() {
+                        errorMessage.classList.remove('show');
+                    }, 3000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
