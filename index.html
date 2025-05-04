@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Staff Training Document Viewer - A responsive web page for viewing the full staff training document">
+    <meta name="theme-color" content="#3a6ea5">
+    <meta name="author" content="Sejed TRABELLSSI">
+    <title>Staff Training Document | Sejed TRABELLSSI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-pdf"></i> Staff Training Document</h1>
+            <p>Full staff training document - Digital Version</p>
+            <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+
+        </header>
+        
+        <div class="content">
+            <div class="mobile-message">
+                <p><strong>Note:</strong> For the best viewing experience on mobile devices, we recommend downloading the PDF file.</p>
+            </div>
+            
+            <div class="buttons">
+                <a href="Full staff training document.pdf" class="btn btn-download" download><i class="fas fa-download"></i> Download PDF</a>
+                <button class="btn" id="fullscreen-btn"><i class="fas fa-expand"></i> Fullscreen</button>
+                <button class="btn" id="print-btn"><i class="fas fa-print"></i> Print</button>
+                <button class="btn" id="zoom-in-btn"><i class="fas fa-search-plus"></i> Zoom In</button>
+                <button class="btn" id="zoom-out-btn"><i class="fas fa-search-minus"></i> Zoom Out</button>
+            </div>
+            
+            <div class="loading-indicator" id="loading-indicator">
+                <div class="spinner"></div>
+                <p>Loading PDF document...</p>
+            </div>
+            
+            <object class="pdf-container" id="pdf-object" data="Full staff training document.pdf" type="application/pdf">
+                <div class="fallback-message">
+                    <h3>PDF Viewer Not Available</h3>
+                    <p>Your browser doesn't support embedded PDFs or the PDF failed to load.</p>
+                    <p>Please <a href="Full staff training document.pdf" download>download the PDF</a> to view it.</p>
+                </div>
+            </object>
+            
+            <div class="pdf-controls">
+                <div class="page-navigation">
+                    <button id="prev-page" class="nav-btn"><i class="fas fa-chevron-left"></i> Previous</button>
+                    <span id="page-info">Page <span id="current-page">-</span> of <span id="total-pages">-</span></span>
+                    <button id="next-page" class="nav-btn">Next <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 - Sejed TRABELLSSI | Staff Training Document</p>
+                <p>Last updated: May 4, 2025</p>
+                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
