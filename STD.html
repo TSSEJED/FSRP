@@ -9,6 +9,36 @@
     <title>Staff Training Document | Sejed TRABELLSSI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
+    <style>
+        /* Logout button styles */
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.6rem 1.2rem;
+            background: var(--gradient-secondary, linear-gradient(135deg, #ff5e62, #ff9966));
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 94, 98, 0.3);
+            margin-top: 1rem;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.4);
+        }
+        
+        .logout-btn i {
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -73,6 +103,10 @@
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <span>Warning Policy</span>
                             </a>
+                            <button id="logout-btn" class="logout-btn" title="Logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
                         </div>
                     </div>
                     
@@ -117,5 +151,6 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>

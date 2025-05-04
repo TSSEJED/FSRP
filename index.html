@@ -311,7 +311,74 @@
             <div class="landing-header">
                 <h1>Welcome to the Document Portal</h1>
                 <p>Select one of the documents below to view its digital version. All documents are optimized for both PC and Android devices.</p>
+                <a href="https://policeroleplay.community/join/AebBj" class="quick-join-btn" target="_blank">
+                    <i class="fas fa-gamepad"></i> Quick Join Game
+                </a>
+                <a href="discord_login.html" class="discord-login-btn">
+                    <i class="fab fa-discord"></i> Login with Discord
+                </a>
             </div>
+            
+            <style>
+                .quick-join-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 50px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    margin-top: 20px;
+                    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+                    transition: all 0.3s ease;
+                }
+                
+                .quick-join-btn:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+                }
+                
+                .quick-join-btn i {
+                    font-size: 1.2em;
+                }
+                
+                .discord-login-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                    background: linear-gradient(135deg, #5865F2, #7289DA);
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 50px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    margin-top: 20px;
+                    margin-left: 15px;
+                    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+                    transition: all 0.3s ease;
+                }
+                
+                .discord-login-btn:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
+                }
+                
+                .discord-login-btn i {
+                    font-size: 1.2em;
+                }
+                
+                @media (max-width: 768px) {
+                    .quick-join-btn, .discord-login-btn {
+                        display: block;
+                        width: 100%;
+                        margin-left: 0;
+                        text-align: center;
+                        margin-top: 10px;
+                    }
+                }
+            </style>
             
             <div class="document-cards">
                 <!-- Staff Training Document Card -->
@@ -323,7 +390,7 @@
                     </div>
                     <div class="card-body">
                         <p>Access the complete staff training document with all procedures, guidelines, and training materials.</p>
-                        <a href="STD.html" class="card-btn">
+                        <a href="login.html" class="card-btn">
                             <i class="fas fa-eye"></i> View Document
                         </a>
                     </div>
@@ -338,8 +405,23 @@
                     </div>
                     <div class="card-body">
                         <p>Access the staff warning policy document with guidelines on warnings, disciplinary procedures, and policies.</p>
-                        <a href="SWPD.html" class="card-btn">
+                        <a href="swpd_login.html" class="card-btn">
                             <i class="fas fa-eye"></i> View Document
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- FSRP Shop Card -->
+                <div class="document-card">
+                    <div class="card-badge">Shop</div>
+                    <div class="card-header" style="background: linear-gradient(135deg, #ff5e62, #ff9966);">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h2>FSRP Shop</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>Browse and purchase memberships, staff opportunities, and other extras for FSRP.</p>
+                        <a href="shop.html" class="card-btn" style="background: linear-gradient(135deg, #ff5e62, #ff9966); box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);">
+                            <i class="fas fa-shopping-bag"></i> Visit Shop
                         </a>
                     </div>
                 </div>

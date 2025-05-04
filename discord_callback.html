@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discord Authentication Callback - FSRP Document Portal">
+    <meta name="theme-color" content="#5865F2">
+    <meta name="author" content="Sejed TRABELLSSI">
+    <title>Discord Authentication | FSRP Document Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
+    <style>
+        .loading-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .loading-icon {
+            font-size: 3rem;
+            color: #5865F2;
+            margin-bottom: 1.5rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .loading-text h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .loading-text p {
+            color: var(--text-color-secondary);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(0.95);
+            }
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(88, 101, 242, 0.2);
+            border-top: 4px solid #5865F2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 1.5rem 0;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Document Portal</h1>
+                    <p>Access important documents - Digital Version</p>
+                </div>
+                <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            </div>
+        </header>
+        
+        <div class="loading-container">
+            <div class="loading-icon">
+                <i class="fab fa-discord"></i>
+            </div>
+            <div class="spinner"></div>
+            <div class="loading-text">
+                <h1>Authenticating with Discord</h1>
+                <p>Please wait while we verify your Discord account and roles...</p>
+                <p>You will be redirected automatically once authentication is complete.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 - Sejed TRABELLSSI | Document Portal</p>
+                <p>Last updated: May 4, 2025</p>
+                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev <i class="fas fa-external-link-alt"></i></a></p>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="discord_auth.js"></script>
+</body>
+</html>

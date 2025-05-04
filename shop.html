@@ -1,0 +1,721 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FSRP Shop - Made by Sejed TRABELLSSI & only available for trainers.">
+    <meta name="theme-color" content="#ff5e62">
+    <meta name="author" content="Sejed TRABELLSSI">
+    <title>FSRP Shop | Sejed TRABELLSSI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
+    <style>
+        /* Shop page specific styles */
+        :root {
+            --shop-primary: #ff5e62;
+            --shop-secondary: #ff9966;
+            --shop-gradient: linear-gradient(135deg, var(--shop-primary), var(--shop-secondary));
+            --shop-shadow: 0 10px 30px rgba(255, 94, 98, 0.15);
+            --shop-shadow-hover: 0 15px 40px rgba(255, 94, 98, 0.25);
+        }
+        
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            background-image: radial-gradient(circle at top right, rgba(255, 94, 98, 0.05) 0%, transparent 70%), 
+                            radial-gradient(circle at bottom left, rgba(255, 153, 102, 0.05) 0%, transparent 70%);
+        }
+        
+        .shop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        .shop-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .shop-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            color: var(--text-color);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: var(--shop-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 94, 98, 0.1);
+        }
+        
+        .shop-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background: var(--shop-gradient);
+            border-radius: 3px;
+        }
+        
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shop-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 94, 98, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shop-shadow-hover);
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--shop-gradient);
+            filter: blur(100px);
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid rgba(255, 94, 98, 0.2);
+            color: var(--shop-primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+        }
+        
+        .section h2 i {
+            font-size: 1.8rem;
+            background: var(--shop-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .item {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px dashed rgba(255, 94, 98, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .item:hover {
+            transform: translateX(5px);
+        }
+        
+        .item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .item-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-color);
+            letter-spacing: -0.01em;
+        }
+        
+        .item-price {
+            background: var(--shop-gradient);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.25);
+            transition: all 0.3s ease;
+        }
+        
+        .item-price:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 94, 98, 0.35);
+        }
+        
+        .item-price i {
+            font-size: 1.1rem;
+            animation: coinSpin 4s infinite linear;
+        }
+        
+        @keyframes coinSpin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .item-details {
+            margin-top: 1rem;
+            padding-left: 0.5rem;
+        }
+        
+        .item-details ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .item-details li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .item-details li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--shop-primary);
+            font-weight: bold;
+        }
+        
+        .divider {
+            height: 3px;
+            background: var(--shop-gradient);
+            margin: 3rem 0;
+            border-radius: 3px;
+            opacity: 0.3;
+        }
+        
+        .rules {
+            background: rgba(255, 94, 98, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid var(--shop-primary);
+            margin-top: 3rem;
+            box-shadow: 0 5px 15px rgba(255, 94, 98, 0.1);
+        }
+        
+        .rules h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--shop-primary);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .rules ul {
+            margin-bottom: 0;
+            padding-left: 1rem;
+        }
+        
+        .rules li {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .purchase-info {
+            background: var(--shop-gradient);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            margin-top: 3rem;
+            text-align: center;
+            box-shadow: var(--shop-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .purchase-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            opacity: 0.2;
+        }
+        
+        .purchase-info h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .purchase-info p {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            position: relative;
+        }
+        
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .discord-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .discord-btn i {
+            font-size: 1.4rem;
+        }
+        
+        .emoji {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9c.83 0 1.5-.67 1.5-1.5S7.83 8 7 8s-1.5.67-1.5 1.5S6.17 11 7 11zm8-1.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5.67 1.5 1.5 1.5 1.5-.67 1.5-1.5zM12 16c1.94 0 3.5-1.56 3.5-3.5 0-.83-.67-1.5-1.5-1.5h-4c-.83 0-1.5.67-1.5 1.5 0 1.94 1.56 3.5 3.5 3.5z"/></svg>');
+            background-repeat: no-repeat;
+            background-size: contain;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        
+        /* Android-specific styles */
+        .android-message {
+            display: none;
+            background: var(--shop-gradient);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: var(--shop-shadow);
+        }
+        
+        .android-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .android-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .android-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .android-btn {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .android-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .android-btn i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .android-btn span {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .android-btn small {
+            opacity: 0.8;
+        }
+        
+        .android-note {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .android-note a {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+        }
+        
+        .watermark a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .section {
+                background: var(--card-bg-dark);
+                border-color: rgba(255, 255, 255, 0.05);
+            }
+            
+            .section h2 {
+                border-bottom-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .item {
+                border-bottom-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .divider {
+                background: var(--shop-gradient);
+            }
+            
+            .rules {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .shop-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .shop-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section {
+                padding: 1.5rem;
+            }
+            
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .item-price {
+                align-self: flex-start;
+            }
+            
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="header-text">
+                    <h1>FSRP Shop</h1>
+                    <p>Memberships and Staff Opportunities</p>
+                </div>
+                <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            </div>
+        </header>
+        
+        <div class="shop-container">
+            <div class="shop-header">
+                <h1>FSRP Shop</h1>
+            </div>
+            
+            <!-- Android-specific message -->
+            <div class="android-message" id="android-message">
+                <div class="android-header">
+                    <i class="fas fa-android android-icon"></i>
+                    <h2>Android Experience</h2>
+                </div>
+                <p>We've optimized your shopping experience for Android devices.</p>
+                <div class="android-options">
+                    <a href="#memberships" class="android-btn">
+                        <i class="fas fa-crown"></i>
+                        <span>Memberships</span>
+                        <small>VIP & Premium</small>
+                    </a>
+                    <a href="#staff" class="android-btn">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Staff Opportunities</span>
+                        <small>Join our team</small>
+                    </a>
+                    <a href="#extras" class="android-btn">
+                        <i class="fas fa-star"></i>
+                        <span>Extras</span>
+                        <small>Additional options</small>
+                    </a>
+                </div>
+                <p class="android-note">Created by Sejed TRABELLSSI | <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev</a></p>
+            </div>
+            
+            <div class="shop-grid" id="desktop-experience">
+                <div class="section">
+                    <h2><i class="fas fa-crown"></i> Memberships</h2>
+                    
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">VIP Membership</div>
+                            <div class="item-price">
+                                <span>50 RBX</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <ul>
+                                <li>Exclusive in-game tag.</li>
+                                <li>Access to a special vehicle/skin.</li>
+                                <li>Priority roleplay opportunities.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">Premium Membership</div>
+                            <div class="item-price">
+                                <span>100 RBX</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <ul>
+                                <li>All VIP benefits.</li>
+                                <li>Additional premium vehicle/skin.</li>
+                                <li>Access to premium-only events.</li>
+                                <li>Unique Discord role.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section" id="staff">
+                    <h2><i class="fas fa-user-shield"></i> Staff Opportunities</h2>
+                    
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">Trial Moderator</div>
+                            <div class="item-price">
+                                <span>30 RBX</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <ul>
+                                <li>Chance to join the staff team.</li>
+                                <li>Permanent mod tag and permissions during trial period.</li>
+                                <li>Access to mod-only tools in-game.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">Admin</div>
+                            <div class="item-price">
+                                <span>50 RBX</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">IA</div>
+                            <div class="item-price">
+                                <span>100 RBX</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section" id="extras">
+                    <h2><i class="fas fa-star"></i> Extras</h2>
+                    
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">Custom Roleplay Scenario</div>
+                            <div class="item-price">
+                                <span>120 RBX</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="item-details">
+                            <ul>
+                                <li>Request a custom scenario hosted by staff for a department or event.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rules">
+                <h3><i class="fas fa-gavel"></i> Rules and Notes</h3>
+                <ul>
+                    <li>Purchases are non-refundable.</li>
+                    <li>Trial Mod purchase does guarantee a permanent position.</li>
+                    <li>Abuse of roles or perks may result in removal without refund.</li>
+                </ul>
+            </div>
+            
+            <div class="purchase-info">
+                <h3><i class="fas fa-shopping-bag"></i> How to purchase</h3>
+                <p>Open a ticket in our Discord server</p>
+                <a href="https://discord.gg/yaprqtp3V3" target="_blank" class="discord-btn">
+                    <i class="fab fa-discord"></i> Join our Discord
+                </a>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 - Sejed TRABELLSSI | FSRP Shop</p>
+                <p>Last updated: May 4, 2025</p>
+                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev <i class="fas fa-external-link-alt"></i></a></p>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // Device detection and UI initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is on Android
+            function isAndroid() {
+                return /Android/i.test(navigator.userAgent);
+            }
+            
+            // Check if user is on mobile device
+            function isMobile() {
+                return window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            }
+            
+            // Initialize UI based on device
+            function initializeUI() {
+                const androidMessage = document.getElementById('android-message');
+                const desktopExperience = document.getElementById('desktop-experience');
+                
+                if (isAndroid()) {
+                    // Show Android-specific message
+                    if (androidMessage) androidMessage.style.display = 'block';
+                    
+                    // Add smooth scrolling for Android section links
+                    const androidLinks = document.querySelectorAll('.android-btn');
+                    androidLinks.forEach(link => {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const targetId = this.getAttribute('href');
+                            const targetElement = document.querySelector(targetId);
+                            if (targetElement) {
+                                window.scrollTo({
+                                    top: targetElement.offsetTop - 100,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        });
+                    });
+                    
+                    // Add watermark for Android
+                    addWatermark();
+                }
+            }
+            
+            // Add watermark
+            function addWatermark() {
+                const watermark = document.createElement('div');
+                watermark.className = 'watermark';
+                watermark.innerHTML = 'Created by <a href="https://sejed.pages.dev" target="_blank">Sejed TRABELLSSI</a>';
+                document.body.appendChild(watermark);
+            }
+            
+            // Initialize the UI
+            initializeUI();
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                // Reinitialize UI on resize to handle orientation changes
+                initializeUI();
+            });
+        });
+    </script>
+</body>
+</html>

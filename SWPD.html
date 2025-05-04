@@ -3,12 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Staff Warning Policy Document Viewer - Made by Sejed TRABELLSSI & only available for trainers.">
+    <meta name="description" content="Staff Warning Policy Document Viewer - Made by Sejed TRABELLSSI & only available for staff.">
     <meta name="theme-color" content="#3a6ea5">
     <meta name="author" content="Sejed TRABELLSSI">
     <title>Staff Warning Policy Document | Sejed TRABELLSSI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
+    <style>
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .logout-btn {
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--text-color-dark);
+            }
+            
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -22,6 +56,9 @@
                     <p>Staff Warning Policy Document - Digital Version</p>
                 </div>
                 <div class="author-badge">Created by Sejed TRABELLSSI</div>
+                <button id="swpd-logout-btn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </header>
         
@@ -117,5 +154,7 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="swpd_auth.js"></script>
+    <script src="android_compat.js"></script>
 </body>
 </html>
