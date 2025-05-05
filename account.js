@@ -23,6 +23,63 @@ function getContrastColor(hexColor) {
     return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
+// Process user roles from member data
+function processUserRoles(memberData, rolesContainer, trainerRoleId, staffRoleId) {
+    // Clear any loading badges
+    const loadingBadges = rolesContainer.querySelectorAll('.role-badge.loading');
+    loadingBadges.forEach(badge => badge.remove());
+    
+    // Clear the roles container
+    rolesContainer.innerHTML = '';
+    
+    // Add default Member role
+    const memberBadge = document.createElement('div');
+    memberBadge.className = 'role-badge member';
+    memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
+    rolesContainer.appendChild(memberBadge);
+    
+    // Get user roles from the member data
+    const userRoles = memberData.roles || [];
+    
+    console.log('Processing user roles:', userRoles);
+    console.log('Trainer role ID:', trainerRoleId);
+    console.log('Staff role ID:', staffRoleId);
+    
+    // Check if user has the trainer or staff roles
+    const isTrainer = userRoles.includes(trainerRoleId);
+    const isStaff = userRoles.includes(staffRoleId);
+    
+    console.log('User roles - Trainer:', isTrainer, 'Staff:', isStaff);
+    
+    // Store role flags for other parts of the application
+    localStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+    localStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
+    sessionStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+    sessionStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
+    
+    // Add trainer role badge if user has the trainer role
+    if (isTrainer) {
+        const trainerBadge = document.createElement('div');
+        trainerBadge.className = 'role-badge trainer';
+        trainerBadge.innerHTML = '<i class="fas fa-graduation-cap"></i> Trainer';
+        rolesContainer.appendChild(trainerBadge);
+    }
+    
+    // Add staff role badge if user has the staff role
+    if (isStaff) {
+        const staffBadge = document.createElement('div');
+        staffBadge.className = 'role-badge staff';
+        staffBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Staff';
+        rolesContainer.appendChild(staffBadge);
+    }
+    
+    // Add a verification badge to show the roles are verified
+    const verifiedBadge = document.createElement('div');
+    verifiedBadge.className = 'role-badge note';
+    verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
+    rolesContainer.appendChild(verifiedBadge);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('%c Account Dashboard | Created by Sejed TRABELLSSI', 'background: #4361ee; color: white; padding: 8px; border-radius: 4px; font-weight: bold;');
     
@@ -244,14 +301,40 @@ async function loadUserRoles() {
             trainerRoleId = window.DISCORD_CONFIG.trainerRoleId;
             staffRoleId = window.DISCORD_CONFIG.staffRoleId;
         } else {
-            guildId = '1271521823259099138'; // Fallback guild ID
-            trainerRoleId = '1366799139031089152'; // Fallback trainer role ID
-            staffRoleId = '1308724851497762837'; // Fallback staff role ID
+            guildId = '1102648991167258735'; // FSRP server ID
+            trainerRoleId = '1102649088701075456'; // FSRP Trainer role ID
+            staffRoleId = '1102649088701075457'; // FSRP Staff role ID
         }
         
         console.log('Using guild ID:', guildId, 'Trainer role ID:', trainerRoleId, 'Staff role ID:', staffRoleId);
         
-        // First, check if the user is in the guild
+        console.log('Checking if user is in the guild with ID:', guildId);
+        
+        // First try a direct approach - get the member data directly
+        try {
+            console.log('Trying direct member endpoint first...');
+            const memberResponse = await fetch(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+            if (memberResponse.ok) {
+                const memberData = await memberResponse.json();
+                console.log('SUCCESS! Member data fetched directly:', memberData);
+                
+                // Process the member data directly
+                processUserRoles(memberData, rolesContainer, trainerRoleId, staffRoleId);
+                return; // Exit the function since we've successfully processed the roles
+            } else {
+                console.warn(`Direct member endpoint failed with status: ${memberResponse.status}. Trying fallback...`);
+            }
+        } catch (directError) {
+            console.error('Error with direct member endpoint:', directError);
+        }
+        
+        // Fallback approach - check guilds first
+        console.log('Trying fallback approach with guilds endpoint...');
         const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -259,15 +342,23 @@ async function loadUserRoles() {
         });
         
         if (!guildsResponse.ok) {
+            console.error(`Failed to fetch user guilds: ${guildsResponse.status}`);
             throw new Error(`Failed to fetch user guilds: ${guildsResponse.status}`);
         }
         
         const guilds = await guildsResponse.json();
         console.log('User guilds:', guilds);
+        console.log('Looking for guild with ID:', guildId);
+        
+        // Log all guild IDs for debugging
+        guilds.forEach(guild => {
+            console.log(`Guild ID: ${guild.id}, Name: ${guild.name}`);
+        });
         
         // Check if user is in the target guild
         const targetGuild = guilds.find(g => g.id === guildId);
         if (!targetGuild) {
+            console.error('User is NOT in the target guild. Guild IDs found:', guilds.map(g => g.id).join(', '));
             // Remove loading badge
             const loadingBadges = rolesContainer.querySelectorAll('.role-badge.loading');
             loadingBadges.forEach(badge => badge.remove());
@@ -631,9 +722,9 @@ async function loadUserPermissions() {
             staffRoleId = window.DISCORD_CONFIG.staffRoleId;
         } else {
             // Fallback IDs if DISCORD_CONFIG is not available
-            guildId = '1271521823259099138'; // FSRP server ID
-            trainerRoleId = '1366799139031089152'; // Trainer role ID
-            staffRoleId = '1308724851497762837'; // Staff role ID
+            guildId = '1102648991167258735'; // FSRP server ID
+            trainerRoleId = '1102649088701075456'; // Trainer role ID
+            staffRoleId = '1102649088701075457'; // Staff role ID
         }
         
         console.log('Using guild ID:', guildId, 'Trainer role ID:', trainerRoleId, 'Staff role ID:', staffRoleId);

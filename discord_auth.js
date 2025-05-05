@@ -20,13 +20,13 @@ const DISCORD_CONFIG = {
         return window.location.origin + '/discord_callback.html';
     },
     scope: 'identify guilds guilds.members.read bot',
-    guildId: '1271521823259099138', // Your Discord server ID
-    trainerRoleId: '1366799139031089152', // Your Trainer role ID
-    staffRoleId: '1308724851497762837', // Your Staff role ID
+    guildId: '1102648991167258735', // FSRP Discord server ID
+    trainerRoleId: '1102649088701075456', // FSRP Trainer role ID
+    staffRoleId: '1102649088701075457', // FSRP Staff role ID
     // Role names for display in notifications
     roleNames: {
-        '1366799139031089152': 'Trainer',
-        '1308724851497762837': 'Staff Member'
+        '1102649088701075456': 'Trainer',
+        '1102649088701075457': 'Staff Member'
     },
     // Auth settings
     authTimeout: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
