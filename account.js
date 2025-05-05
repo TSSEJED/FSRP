@@ -384,6 +384,9 @@ async function loadUserRoles() {
     } catch (error) {
         console.error('Error fetching roles:', error);
         
+        // Declare roles variable at this scope level so it's available throughout the catch block
+        let roles = [];
+        
         // Try an alternative approach - fetch from discord_auth.js cached data
         try {
             console.log('Attempting to use cached role data from discord_auth.js...');
@@ -408,6 +411,9 @@ async function loadUserRoles() {
                     trainerBadge.className = 'role-badge trainer';
                     trainerBadge.innerHTML = '<i class="fas fa-graduation-cap"></i> Trainer';
                     rolesContainer.appendChild(trainerBadge);
+                    
+                    // Add to roles array for later use
+                    roles.push('Trainer');
                 }
                 
                 if (isStaff) {
@@ -415,6 +421,9 @@ async function loadUserRoles() {
                     staffBadge.className = 'role-badge staff';
                     staffBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Staff Member';
                     rolesContainer.appendChild(staffBadge);
+                    
+                    // Add to roles array for later use
+                    roles.push('Staff Member');
                 }
                 
                 // Add error badge
@@ -423,7 +432,10 @@ async function loadUserRoles() {
                 errorBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Using cached roles';
                 rolesContainer.appendChild(errorBadge);
                 
-                return;
+                // If we've added roles here, we don't need to continue to the forEach loop below
+                if (roles.length > 0) {
+                    return;
+                }
             }
             
             // If we don't have DISCORD_CONFIG, fall back to stored roles data
@@ -433,7 +445,7 @@ async function loadUserRoles() {
             
             // Fallback to stored roles data
             let rolesJson = localStorage.getItem('discord_roles') || sessionStorage.getItem('discord_roles');
-            let roles = [];
+            roles = []; // Reset roles array
             
             try {
                 if (rolesJson) {
