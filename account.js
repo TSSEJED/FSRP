@@ -71,15 +71,25 @@ async function initializeAccountDashboard() {
     } catch (error) {
         console.error('Error initializing account dashboard:', error);
         // Show error message
-        document.getElementById('account-container').innerHTML += `
-            <div class="error-message" style="margin-top: 20px;">
-                <i class="fas fa-exclamation-triangle"></i> Error loading account data: ${error.message}
-            </div>
-        `;
+        const accountContainer = document.getElementById('account-container');
+        if (accountContainer) {
+            accountContainer.innerHTML += `
+                <div class="error-message" style="margin-top: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i> Error loading account data: ${error.message}
+                </div>
+            `;
+        }
     } finally {
         // Hide loading overlay
-        document.getElementById('loading-overlay').style.display = 'none';
-        document.getElementById('account-container').classList.remove('loading');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+        
+        const accountContainer = document.getElementById('account-container');
+        if (accountContainer) {
+            accountContainer.classList.remove('loading');
+        }
     }
 }
 
@@ -89,9 +99,13 @@ async function loadUserInfo() {
     const timestamp = parseInt(localStorage.getItem('discord_auth_timestamp') || sessionStorage.getItem('discord_auth_timestamp') || '0');
     
     // Show loading state
-    document.getElementById('account-username').textContent = 'Loading...';
-    document.getElementById('account-id').textContent = 'Loading user info...';
-    document.getElementById('account-avatar').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    const usernameElement = document.getElementById('account-username');
+    const idElement = document.getElementById('account-id');
+    const avatarElement = document.getElementById('account-avatar');
+    
+    if (usernameElement) usernameElement.textContent = 'Loading...';
+    if (idElement) idElement.textContent = 'Loading user info...';
+    if (avatarElement) avatarElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
     try {
         // Fetch user info directly from Discord API
@@ -109,19 +123,23 @@ async function loadUserInfo() {
         console.log('User data fetched from Discord:', userData);
         
         // Update username
-        document.getElementById('account-username').textContent = userData.username;
+        const usernameElement = document.getElementById('account-username');
+        if (usernameElement) usernameElement.textContent = userData.username;
         
         // Update user ID
-        document.getElementById('account-id').textContent = 'Discord ID: ' + userData.id;
+        const idElement = document.getElementById('account-id');
+        if (idElement) idElement.textContent = 'Discord ID: ' + userData.id;
         
         // Update avatar
         const avatarElement = document.getElementById('account-avatar');
-        if (userData.avatar) {
-            // Use actual Discord avatar if available
-            avatarElement.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png" alt="${userData.username}">`;
-        } else {
-            // Fallback to first letter of username
-            avatarElement.innerHTML = `<span>${userData.username.charAt(0).toUpperCase()}</span>`;
+        if (avatarElement) {
+            if (userData.avatar) {
+                // Use actual Discord avatar if available
+                avatarElement.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png" alt="${userData.username}">`;
+            } else {
+                // Fallback to first letter of username
+                avatarElement.innerHTML = `<span>${userData.username.charAt(0).toUpperCase()}</span>`;
+            }
         }
         
         // Add additional user info if available
@@ -141,7 +159,7 @@ async function loadUserInfo() {
             additionalDetails += `<div class="detail-item"><i class="fas fa-gem"></i> ${nitroTypes[userData.premium_type] || 'Nitro Subscriber'}</div>`;
         }
         
-        if (additionalDetails) {
+        if (additionalDetails && userDetailsContainer) {
             userDetailsContainer.innerHTML += additionalDetails;
         }
         
@@ -151,12 +169,14 @@ async function loadUserInfo() {
         
         // Update login date
         const loginDate = new Date(timestamp);
-        document.getElementById('account-login-date').textContent = 'Login: ' + formatDate(loginDate);
+        const loginDateElement = document.getElementById('account-login-date');
+        if (loginDateElement) loginDateElement.textContent = 'Login: ' + formatDate(loginDate);
         
         // Update login expiry
         const saveLogin = localStorage.getItem('discord_save_login') === 'true';
         const expiryDate = new Date(timestamp + (saveLogin ? 7 * 24 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000));
-        document.getElementById('account-login-expiry').textContent = 'Expires: ' + formatDate(expiryDate);
+        const expiryElement = document.getElementById('account-login-expiry');
+        if (expiryElement) expiryElement.textContent = 'Expires: ' + formatDate(expiryDate);
         
     } catch (error) {
         console.error('Error fetching user info:', error);
@@ -165,23 +185,31 @@ async function loadUserInfo() {
         const username = localStorage.getItem('discord_username') || sessionStorage.getItem('discord_username') || 'Unknown User';
         const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id') || 'Unknown';
         
-        document.getElementById('account-username').textContent = username;
-        document.getElementById('account-id').textContent = 'Discord ID: ' + userId;
+        const usernameElement = document.getElementById('account-username');
+        const idElement = document.getElementById('account-id');
+        
+        if (usernameElement) usernameElement.textContent = username;
+        if (idElement) idElement.textContent = 'Discord ID: ' + userId;
         
         // Update avatar with first letter of username
         const avatarElement = document.getElementById('account-avatar');
-        if (username && username !== 'Unknown User') {
-            avatarElement.innerHTML = `<span>${username.charAt(0).toUpperCase()}</span>`;
-        } else {
-            avatarElement.innerHTML = `<span>?</span>`;
+        if (avatarElement) {
+            if (username && username !== 'Unknown User') {
+                avatarElement.innerHTML = `<span>${username.charAt(0).toUpperCase()}</span>`;
+            } else {
+                avatarElement.innerHTML = `<span>?</span>`;
+            }
         }
         
         // Show error message
-        document.getElementById('user-details').innerHTML += `
-            <div class="detail-item error">
-                <i class="fas fa-exclamation-triangle"></i> Could not fetch live data from Discord
-            </div>
-        `;
+        const userDetailsElement = document.getElementById('user-details');
+        if (userDetailsElement) {
+            userDetailsElement.innerHTML += `
+                <div class="detail-item error">
+                    <i class="fas fa-exclamation-triangle"></i> Could not fetch live data from Discord
+                </div>
+            `;
+        }
     }
 }
 
@@ -190,6 +218,12 @@ async function loadUserRoles() {
     const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
     const rolesContainer = document.getElementById('roles-container');
+    
+    // If roles container doesn't exist, exit early
+    if (!rolesContainer) {
+        console.warn('Roles container not found in the DOM');
+        return;
+    }
     
     // Show loading state
     rolesContainer.innerHTML = `
@@ -385,6 +419,12 @@ async function loadUserPermissions() {
     const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
     const permissionsContainer = document.getElementById('permissions-container');
     
+    // If permissions container doesn't exist, exit early
+    if (!permissionsContainer) {
+        console.warn('Permissions container not found in the DOM');
+        return;
+    }
+    
     // Show loading state
     permissionsContainer.innerHTML = `
         <div class="permission-item loading">
@@ -579,6 +619,13 @@ async function loadUserPermissions() {
 // Update permissions list with document access information
 function updatePermissionsList() {
     const permissionsList = document.getElementById('permissions-list');
+    
+    // If permissions list doesn't exist, exit early
+    if (!permissionsList) {
+        console.warn('Permissions list not found in the DOM');
+        return;
+    }
+    
     const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
     const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
     
@@ -639,6 +686,13 @@ function updatePermissionsList() {
 // Update login status
 function updateLoginStatus() {
     const loginStatus = document.getElementById('login-status');
+    
+    // If login status element doesn't exist, exit early
+    if (!loginStatus) {
+        console.warn('Login status element not found in the DOM');
+        return;
+    }
+    
     const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     const timestamp = parseInt(localStorage.getItem('discord_auth_timestamp') || sessionStorage.getItem('discord_auth_timestamp') || '0');
     const currentTime = Date.now();
@@ -663,14 +717,21 @@ function updateLoginStatus() {
 function updateSaveLoginButton() {
     const saveLoginBtn = document.getElementById('save-login-btn');
     const saveLoginText = document.getElementById('save-login-text');
+    
+    // If save login button doesn't exist, exit early
+    if (!saveLoginBtn || !saveLoginText) {
+        console.warn('Save login button or text not found in the DOM');
+        return;
+    }
+    
     const saveLogin = localStorage.getItem('discord_save_login') === 'true';
     
     if (saveLogin) {
         saveLoginText.textContent = 'Disable Save Login';
-        saveLoginBtn.innerHTML = '<i class="fas fa-times"></i> Disable Save Login';
+        saveLoginBtn.innerHTML = '<i class="fas fa-toggle-on"></i> Disable Save Login';
     } else {
         saveLoginText.textContent = 'Enable Save Login';
-        saveLoginBtn.innerHTML = '<i class="fas fa-save"></i> Enable Save Login';
+        saveLoginBtn.innerHTML = '<i class="fas fa-toggle-off"></i> Enable Save Login';
     }
 }
 
