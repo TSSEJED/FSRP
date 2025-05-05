@@ -371,6 +371,9 @@
                     case 'bot_status_check_failed':
                         errorText.textContent = 'Unable to verify bot status. Please try again later.';
                         break;
+                    case 'callback_timeout':
+                        errorText.textContent = 'Authentication process timed out. Please try again or contact an administrator if the issue persists.';
+                        break;
                     default:
                         errorText.textContent = 'An error occurred. Please try again.';
                 }

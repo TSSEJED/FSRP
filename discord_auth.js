@@ -143,26 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = 'discord_login.html?error=' + error;
                 return;
             }
-            
-            // Check bot status
-            fetch('https://discord.com/api/guilds/' + DISCORD_CONFIG.guildId + '/widget.json')
-            .then(response => response.json())
-            .then(data => {
-                if (data.presence_count === 0) {
-                    console.error('Bot is offline');
-                    // Clear the timeout since we're handling an error
-                    clearTimeout(callbackTimeout);
-                    window.location.href = 'discord_login.html?error=bot_offline';
-                    return;
-                }
-            })
-            .catch(error => {
-                console.error('Error checking bot status:', error);
-                // Clear the timeout since we're handling an error
-                clearTimeout(callbackTimeout);
-                window.location.href = 'discord_login.html?error=bot_status_check_failed';
-                return;
-            });
         }
         
         // Check URL parameters (some OAuth implementations use query params instead of hash)

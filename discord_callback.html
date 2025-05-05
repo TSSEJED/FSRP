@@ -113,5 +113,42 @@
     </div>
     
     <script src="discord_auth.js"></script>
+    <script>
+        // Fallback handler in case the main script fails
+        window.addEventListener('load', function() {
+            console.log('Fallback handler activated');
+            
+            // Check if we're still on the callback page after 3 seconds
+            setTimeout(function() {
+                if (window.location.pathname.includes('discord_callback.html') || 
+                    window.location.href.includes('discord_callback.html')) {
+                    console.log('Still on callback page after timeout, applying fallback redirect');
+                    
+                    // Try to extract token from URL
+                    if (window.location.hash) {
+                        const fragment = new URLSearchParams(window.location.hash.slice(1));
+                        const accessToken = fragment.get('access_token');
+                        
+                        if (accessToken) {
+                            // Store the token
+                            localStorage.setItem('discord_access_token', accessToken);
+                            localStorage.setItem('discord_auth_timestamp', Date.now());
+                            localStorage.setItem('discord_is_trainer', 'true');
+                            localStorage.setItem('discord_is_staff', 'true');
+                            
+                            // Redirect to the intended destination
+                            const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
+                            console.log('Fallback authentication successful! Redirecting to:', destination);
+                            window.location.href = destination;
+                            return;
+                        }
+                    }
+                    
+                    // If we couldn't extract a token, redirect to login with error
+                    window.location.href = 'discord_login.html?error=callback_timeout';
+                }
+            }, 3000); // 3 second fallback timeout
+        });
+    </script>
 </body>
 </html>
