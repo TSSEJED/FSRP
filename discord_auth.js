@@ -19,7 +19,7 @@ const DISCORD_CONFIG = {
         // For web servers (http/https), use the current origin
         return window.location.origin + '/discord_callback.html';
     },
-    scope: 'identify guilds guilds.members.read bot',
+    scope: 'identify email guilds guilds.members.read',
     guildId: '1102648991167258735', // FSRP Discord server ID
     trainerRoleId: '1102649088701075456', // FSRP Trainer role ID
     staffRoleId: '1102649088701075457', // FSRP Staff role ID

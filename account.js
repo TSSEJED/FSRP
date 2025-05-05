@@ -272,7 +272,7 @@ async function loadUserInfo() {
 
 // Load user roles
 async function loadUserRoles() {
-    console.log('Loading user roles...');
+    console.log('Loading user roles directly from Discord...');
     const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
     const rolesContainer = document.getElementById('roles-container');
@@ -291,40 +291,107 @@ async function loadUserRoles() {
     loadingBadge.innerHTML = '<i class="fas fa-sync fa-spin"></i> Loading roles...';
     rolesContainer.appendChild(loadingBadge);
     
-    // Add default Member role
-    const memberBadge = document.createElement('div');
-    memberBadge.className = 'role-badge member';
-    memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
-    rolesContainer.appendChild(memberBadge);
-    
     try {
-        // Remove the loading badge
-        const loadingBadges = rolesContainer.querySelectorAll('.role-badge.loading');
-        loadingBadges.forEach(badge => badge.remove());
-        
-        console.log('Using simplified approach to get roles');
-        
         // First, check if the user is logged in with Discord
         if (!token || !userId) {
             throw new Error('User is not logged in with Discord');
         }
         
-        // Get basic user info to verify the token is valid
-        const userResponse = await fetch('https://discord.com/api/users/@me', {
+        // Get the guild ID and role IDs
+        let guildId = '';
+        let trainerRoleId = '';
+        let staffRoleId = '';
+        
+        if (window.DISCORD_CONFIG) {
+            guildId = window.DISCORD_CONFIG.guildId;
+            trainerRoleId = window.DISCORD_CONFIG.trainerRoleId;
+            staffRoleId = window.DISCORD_CONFIG.staffRoleId;
+            console.log('Using DISCORD_CONFIG for IDs');
+        } else {
+            guildId = '1102648991167258735'; // FSRP server ID
+            trainerRoleId = '1102649088701075456'; // FSRP Trainer role ID
+            staffRoleId = '1102649088701075457'; // FSRP Staff role ID
+            console.log('Using hardcoded IDs');
+        }
+        
+        console.log('Guild ID:', guildId);
+        console.log('Trainer Role ID:', trainerRoleId);
+        console.log('Staff Role ID:', staffRoleId);
+        
+        // Step 1: Get user's guilds to check if they're in the server
+        console.log('Fetching user guilds...');
+        const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
         
-        if (!userResponse.ok) {
-            throw new Error(`Failed to fetch user info: ${userResponse.status}`);
+        if (!guildsResponse.ok) {
+            throw new Error(`Failed to fetch guilds: ${guildsResponse.status}`);
         }
         
-        // Token is valid, now check for stored role flags
-        const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
-        const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
+        const guilds = await guildsResponse.json();
+        console.log('User guilds:', guilds);
         
-        console.log('Using stored role flags - Trainer:', isTrainer, 'Staff:', isStaff);
+        // Check if user is in the target guild
+        const targetGuild = guilds.find(g => g.id === guildId);
+        if (!targetGuild) {
+            // Remove loading badge
+            const loadingBadges = rolesContainer.querySelectorAll('.role-badge.loading');
+            loadingBadges.forEach(badge => badge.remove());
+            
+            // Add not a member badge
+            const notMemberBadge = document.createElement('div');
+            notMemberBadge.className = 'role-badge error';
+            notMemberBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Not a Server Member';
+            rolesContainer.appendChild(notMemberBadge);
+            
+            throw new Error('User is not a member of the target guild');
+        }
+        
+        console.log('User is a member of the guild:', targetGuild.name);
+        
+        // Step 2: Fetch the user's roles directly using the current user endpoint
+        console.log('Fetching user member data...');
+        const memberResponse = await fetch(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!memberResponse.ok) {
+            throw new Error(`Failed to fetch member data: ${memberResponse.status}`);
+        }
+        
+        const memberData = await memberResponse.json();
+        console.log('Member data:', memberData);
+        
+        // Get the user's roles
+        const userRoles = memberData.roles || [];
+        console.log('User roles:', userRoles);
+        
+        // Remove loading badge
+        const loadingBadges = rolesContainer.querySelectorAll('.role-badge.loading');
+        loadingBadges.forEach(badge => badge.remove());
+        
+        // Add default Member role
+        const memberBadge = document.createElement('div');
+        memberBadge.className = 'role-badge member';
+        memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
+        rolesContainer.appendChild(memberBadge);
+        
+        // Check if user has trainer or staff roles
+        const isTrainer = userRoles.includes(trainerRoleId);
+        const isStaff = userRoles.includes(staffRoleId);
+        
+        console.log('Is Trainer:', isTrainer);
+        console.log('Is Staff:', isStaff);
+        
+        // Store role flags for future use
+        localStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+        localStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
+        sessionStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+        sessionStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
         
         // Add trainer role badge if user has the trainer role
         if (isTrainer) {
@@ -342,11 +409,11 @@ async function loadUserRoles() {
             rolesContainer.appendChild(staffBadge);
         }
         
-        // Add a note about using stored roles
-        const noteBadge = document.createElement('div');
-        noteBadge.className = 'role-badge note';
-        noteBadge.innerHTML = '<i class="fas fa-info-circle"></i> Using stored roles';
-        rolesContainer.appendChild(noteBadge);
+        // Add a verification badge
+        const verifiedBadge = document.createElement('div');
+        verifiedBadge.className = 'role-badge note';
+        verifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
+        rolesContainer.appendChild(verifiedBadge);
         
     } catch (error) {
         console.error('Error fetching roles:', error);
@@ -592,7 +659,7 @@ async function loadUserRoles() {
 }
 
 async function loadUserPermissions() {
-    console.log('Loading user permissions...');
+    console.log('Loading user permissions directly from Discord...');
     const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
     const permissionsContainer = document.getElementById('permissions-list');
@@ -628,22 +695,85 @@ async function loadUserPermissions() {
             return;
         }
         
-        // Get basic user info to verify the token is valid
-        const userResponse = await fetch('https://discord.com/api/users/@me', {
+        // Get the guild ID and role IDs
+        let guildId = '';
+        let trainerRoleId = '';
+        let staffRoleId = '';
+        
+        if (window.DISCORD_CONFIG) {
+            guildId = window.DISCORD_CONFIG.guildId;
+            trainerRoleId = window.DISCORD_CONFIG.trainerRoleId;
+            staffRoleId = window.DISCORD_CONFIG.staffRoleId;
+            console.log('Using DISCORD_CONFIG for permissions');
+        } else {
+            guildId = '1102648991167258735'; // FSRP server ID
+            trainerRoleId = '1102649088701075456'; // FSRP Trainer role ID
+            staffRoleId = '1102649088701075457'; // FSRP Staff role ID
+            console.log('Using hardcoded IDs for permissions');
+        }
+        
+        console.log('Guild ID for permissions:', guildId);
+        
+        // Step 1: Get user's guilds to check if they're in the server
+        console.log('Fetching user guilds for permissions...');
+        const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
         
-        if (!userResponse.ok) {
-            throw new Error(`Failed to fetch user info: ${userResponse.status}`);
+        if (!guildsResponse.ok) {
+            throw new Error(`Failed to fetch guilds for permissions: ${guildsResponse.status}`);
         }
         
-        // Token is valid, now check for stored role flags
-        const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
-        const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
+        const guilds = await guildsResponse.json();
         
-        console.log('Using stored role flags for permissions - Trainer:', isTrainer, 'Staff:', isStaff);
+        // Check if user is in the target guild
+        const targetGuild = guilds.find(g => g.id === guildId);
+        if (!targetGuild) {
+            permissionsContainer.innerHTML = `
+                <div class="permission-item">
+                    <i class="fas fa-exclamation-triangle permission-icon denied"></i>
+                    <div class="permission-text">
+                        <h4>Not a Discord Server Member</h4>
+                        <p>You must join the FSRP Discord server to get roles and permissions. <a href="https://discord.gg/fsrp" target="_blank">Click here to join</a>.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log('User is a member of the guild for permissions:', targetGuild.name);
+        
+        // Step 2: Fetch the user's roles directly
+        console.log('Fetching user member data for permissions...');
+        const memberResponse = await fetch(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!memberResponse.ok) {
+            throw new Error(`Failed to fetch member data for permissions: ${memberResponse.status}`);
+        }
+        
+        const memberData = await memberResponse.json();
+        console.log('Member data for permissions:', memberData);
+        
+        // Get the user's roles
+        const userRoles = memberData.roles || [];
+        console.log('User roles for permissions:', userRoles);
+        
+        // Check if user has trainer or staff roles
+        const isTrainer = userRoles.includes(trainerRoleId);
+        const isStaff = userRoles.includes(staffRoleId);
+        
+        console.log('Permissions - Is Trainer:', isTrainer);
+        console.log('Permissions - Is Staff:', isStaff);
+        
+        // Store role flags for future use
+        localStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+        localStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
         
         // Clear permissions container
         permissionsContainer.innerHTML = '';
