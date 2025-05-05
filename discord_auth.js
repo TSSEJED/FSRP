@@ -19,7 +19,7 @@ const DISCORD_CONFIG = {
         // For web servers (http/https), use the current origin
         return window.location.origin + '/discord_callback.html';
     },
-    scope: 'identify guilds guilds.members.read',
+    scope: 'identify guilds guilds.members.read bot',
     guildId: '1271521823259099138', // Your Discord server ID
     trainerRoleId: '1366799139031089152', // Your Trainer role ID
     staffRoleId: '1308724851497762837', // Your Staff role ID
