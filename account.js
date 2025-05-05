@@ -263,11 +263,47 @@ async function loadUserRoles() {
         });
         
         // Now fetch the user's guild membership to get their roles
-        const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
+        // First try the direct members endpoint
+        let memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+        
+        // If that fails, try the alternative approach by getting user guilds
+        if (!memberResponse.ok) {
+            console.warn(`Direct member fetch failed with status: ${memberResponse.status}. Trying alternative approach...`);
+            
+            // Get user's guilds
+            const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+            if (!guildsResponse.ok) {
+                console.error(`Failed to fetch user guilds: ${guildsResponse.status}`);
+                throw new Error(`Failed to fetch user guilds: ${guildsResponse.status}`);
+            }
+            
+            const guilds = await guildsResponse.json();
+            console.log('User guilds:', guilds);
+            
+            // Check if user is in the target guild
+            const targetGuild = guilds.find(g => g.id === guildId);
+            if (!targetGuild) {
+                throw new Error('User is not a member of the target guild');
+            }
+            
+            // Try the members endpoint again with the bot token if available
+            if (window.DISCORD_CONFIG && window.DISCORD_CONFIG.botToken) {
+                memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
+                    headers: {
+                        Authorization: `Bot ${window.DISCORD_CONFIG.botToken}`
+                    }
+                });
+            }
+        }
         
         if (!memberResponse.ok) {
             throw new Error(`Failed to fetch member info: ${memberResponse.status}`);
@@ -348,32 +384,80 @@ async function loadUserRoles() {
     } catch (error) {
         console.error('Error fetching roles:', error);
         
-        // Fallback to stored roles data
-        let rolesJson = localStorage.getItem('discord_roles') || sessionStorage.getItem('discord_roles');
-        let roles = [];
-        
+        // Try an alternative approach - fetch from discord_auth.js cached data
         try {
-            if (rolesJson) {
-                roles = JSON.parse(rolesJson);
+            console.log('Attempting to use cached role data from discord_auth.js...');
+            
+            // Check if we have the Discord config available
+            if (window.DISCORD_CONFIG) {
+                // Clear roles container
+                rolesContainer.innerHTML = '';
+                
+                // Add default Member role
+                const memberBadge = document.createElement('div');
+                memberBadge.className = 'role-badge member';
+                memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
+                rolesContainer.appendChild(memberBadge);
+                
+                // Add roles from DISCORD_CONFIG if the user has them
+                const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
+                const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
+                
+                if (isTrainer) {
+                    const trainerBadge = document.createElement('div');
+                    trainerBadge.className = 'role-badge trainer';
+                    trainerBadge.innerHTML = '<i class="fas fa-graduation-cap"></i> Trainer';
+                    rolesContainer.appendChild(trainerBadge);
+                }
+                
+                if (isStaff) {
+                    const staffBadge = document.createElement('div');
+                    staffBadge.className = 'role-badge staff';
+                    staffBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Staff Member';
+                    rolesContainer.appendChild(staffBadge);
+                }
+                
+                // Add error badge
+                const errorBadge = document.createElement('div');
+                errorBadge.className = 'role-badge error';
+                errorBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Using cached roles';
+                rolesContainer.appendChild(errorBadge);
+                
+                return;
             }
-        } catch (parseError) {
-            console.error('Error parsing roles:', parseError);
-        }
-        
-        // Clear roles container
-        rolesContainer.innerHTML = '';
-        
-        // Check if user has any roles
-        if (roles.length === 0) {
-            rolesContainer.innerHTML = `
-                <div class="role-badge member">
-                    <i class="fas fa-user"></i> Member
-                </div>
-                <div class="role-badge error">
-                    <i class="fas fa-exclamation-triangle"></i> Could not fetch live roles
-                </div>
-            `;
-            return;
+            
+            // If we don't have DISCORD_CONFIG, fall back to stored roles data
+            throw new Error('DISCORD_CONFIG not available');
+        } catch (alternativeError) {
+            console.error('Alternative approach failed:', alternativeError);
+            
+            // Fallback to stored roles data
+            let rolesJson = localStorage.getItem('discord_roles') || sessionStorage.getItem('discord_roles');
+            let roles = [];
+            
+            try {
+                if (rolesJson) {
+                    roles = JSON.parse(rolesJson);
+                }
+            } catch (parseError) {
+                console.error('Error parsing roles:', parseError);
+            }
+            
+            // Clear roles container
+            rolesContainer.innerHTML = '';
+            
+            // Check if user has any roles
+            if (roles.length === 0) {
+                rolesContainer.innerHTML = `
+                    <div class="role-badge member">
+                        <i class="fas fa-user"></i> Member
+                    </div>
+                    <div class="role-badge error">
+                        <i class="fas fa-exclamation-triangle"></i> Could not fetch live roles
+                    </div>
+                `;
+                return;
+            }
         }
         
         // Add each role from stored data
