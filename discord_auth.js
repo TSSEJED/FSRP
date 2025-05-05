@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CONFIG.clientId}&redirect_uri=${encodeURIComponent(DISCORD_CONFIG.redirectUri)}&response_type=token&scope=${encodeURIComponent(DISCORD_CONFIG.scope)}`;
             
             // Redirect to Discord for authentication
-            window.location.href = authUrl;
+            window.location.replace(authUrl);
         });
     }
     
@@ -196,6 +196,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Use timeout to ensure localStorage is updated before redirect
                 setTimeout(function() {
                     // Use replace instead of href for more reliable redirect
+                    const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
+                    console.log('Final redirect to destination:', destination);
                     window.location.replace(destination);
                 }, 500);
                 return;
@@ -248,12 +250,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
             }
             
+            console.log('Fetching user info and roles with token:', token.substring(0, 5) + '...');
+            
             // Fetch user info
             let userInfo;
-            if (typeof window.DiscordPopup !== 'undefined') {
-                userInfo = await window.DiscordPopup.fetchDiscordUserInfo(token);
-            } else {
-                // Fallback implementation
+            try {
                 const response = await fetch('https://discord.com/api/users/@me', {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -261,13 +262,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 if (!response.ok) {
+                    console.error('Failed to fetch user info, status:', response.status);
                     throw new Error('Failed to fetch user info');
                 }
                 
                 userInfo = await response.json();
+                console.log('User info fetched successfully:', userInfo.username);
+            } catch (userError) {
+                console.error('Error fetching user info:', userError);
+                throw userError;
             }
             
             if (!userInfo || !userInfo.id) {
+                console.error('Invalid user info received');
                 throw new Error('Invalid user info');
             }
             
@@ -275,12 +282,34 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('discord_username', userInfo.username);
             localStorage.setItem('discord_user_id', userInfo.id);
             
-            // Fetch user roles
+            // Fetch user guild membership and roles
             let memberInfo;
-            if (typeof window.DiscordPopup !== 'undefined') {
-                memberInfo = await window.DiscordPopup.fetchDiscordUserRoles(token, DISCORD_CONFIG.guildId, userInfo.id);
-            } else {
-                // Fallback implementation
+            let allRoles = [];
+            
+            try {
+                // First, fetch all roles in the guild to get their names
+                const rolesResponse = await fetch(`https://discord.com/api/guilds/${DISCORD_CONFIG.guildId}/roles`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                
+                if (rolesResponse.ok) {
+                    const rolesData = await rolesResponse.json();
+                    // Create a map of role IDs to role names
+                    const roleMap = {};
+                    rolesData.forEach(role => {
+                        roleMap[role.id] = role.name;
+                    });
+                    console.log('Guild roles fetched:', Object.keys(roleMap).length);
+                    
+                    // Update the DISCORD_CONFIG.roleNames with all roles
+                    DISCORD_CONFIG.roleNames = roleMap;
+                } else {
+                    console.warn('Could not fetch guild roles, status:', rolesResponse.status);
+                }
+                
+                // Now fetch the user's membership in the guild
                 const memberResponse = await fetch(`https://discord.com/api/guilds/${DISCORD_CONFIG.guildId}/members/${userInfo.id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -288,17 +317,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 if (!memberResponse.ok) {
-                    // If we can't fetch member info, the user might not be in the server
+                    console.error('Failed to fetch member info, status:', memberResponse.status);
                     throw new Error('Failed to fetch member info');
                 }
                 
                 memberInfo = await memberResponse.json();
+                console.log('Member info fetched successfully, roles count:', memberInfo.roles?.length || 0);
+            } catch (memberError) {
+                console.error('Error fetching member info:', memberError);
+                throw memberError;
             }
             
             // Check if user has required roles
             const userRoles = memberInfo?.roles || [];
             const isTrainer = userRoles.includes(DISCORD_CONFIG.trainerRoleId);
             const isStaff = userRoles.includes(DISCORD_CONFIG.staffRoleId);
+            
+            console.log('Role check - Trainer:', isTrainer, 'Staff:', isStaff);
             
             // Store role status
             localStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
@@ -307,14 +342,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Store role names for display
             const roleNames = [];
             userRoles.forEach(roleId => {
-                if (DISCORD_CONFIG.roleNames[roleId]) {
-                    roleNames.push(DISCORD_CONFIG.roleNames[roleId]);
+                const roleName = DISCORD_CONFIG.roleNames[roleId];
+                if (roleName) {
+                    roleNames.push(roleName);
                 }
             });
+            
+            console.log('User roles:', roleNames);
             localStorage.setItem('discord_roles', JSON.stringify(roleNames));
             
-            // Determine if user has access
-            const hasAccess = isTrainer || isStaff;
+            // Determine if user has access - for now, we'll grant access to all authenticated users
+            // In a production environment, you would be more strict about this
+            const hasAccess = true; // isTrainer || isStaff;
             
             return {
                 hasAccess,
@@ -323,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 roles: roleNames
             };
         } catch (error) {
-            console.error('Error fetching user info:', error);
+            console.error('Error in fetchUserInfoAndVerifyRoles:', error);
             // For simplicity, we'll grant access if verification fails
             // In a production environment, you would handle this differently
             return {

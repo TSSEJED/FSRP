@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Account Dashboard - FSRP Document Portal">
+    <meta name="theme-color" content="#4361ee">
+    <meta name="author" content="Sejed TRABELLSSI">
+    <title>Account Dashboard | FSRP Document Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="b8a1635440153492bf99a79ea37bdbbb.png" type="image/x-icon">
+    <style>
+        /* Account page specific styles */
+        .account-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .account-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .account-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .account-header p {
+            color: var(--text-color-secondary);
+        }
+        
+        .account-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .account-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .account-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .account-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            color: var(--primary-color);
+        }
+        
+        .account-section-title i {
+            margin-right: 0.5rem;
+        }
+        
+        .account-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .account-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .account-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .account-details h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-details p {
+            color: var(--text-color-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .account-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .account-meta-item {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .account-meta-item i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .roles-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .role-badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .role-badge i {
+            margin-right: 0.5rem;
+        }
+        
+        .role-badge.staff {
+            background: linear-gradient(135deg, #4cc9f0, #4361ee);
+        }
+        
+        .role-badge.trainer {
+            background: linear-gradient(135deg, #f72585, #7209b7);
+        }
+        
+        .role-badge.member {
+            background: linear-gradient(135deg, #3a0ca3, #4361ee);
+        }
+        
+        .permissions-list {
+            margin-top: 1rem;
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius-sm);
+        }
+        
+        .permission-icon {
+            margin-right: 0.75rem;
+            color: var(--success-color);
+            font-size: 1.1rem;
+        }
+        
+        .permission-icon.denied {
+            color: var(--danger-color);
+        }
+        
+        .permission-text {
+            flex: 1;
+        }
+        
+        .permission-text h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .permission-text p {
+            font-size: 0.85rem;
+            color: var(--text-color-secondary);
+        }
+        
+        .account-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .account-btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .account-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .account-btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .account-btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .account-btn-secondary {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+        }
+        
+        .account-btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .account-btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .account-btn-danger:hover {
+            background: #e71d36;
+            transform: translateY(-2px);
+        }
+        
+        .login-status {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .login-status.active {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success-color);
+        }
+        
+        .login-status.inactive {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .login-status i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .account-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .account-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .account-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .account-meta {
+                justify-content: center;
+            }
+            
+            .account-actions {
+                flex-direction: column;
+            }
+            
+            .account-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Document Portal</h1>
+                    <p>Access important documents - Digital Version</p>
+                </div>
+                <div class="author-badge">Created by Sejed TRABELLSSI</div>
+            </div>
+        </header>
+        
+        <div class="account-container">
+            <div class="account-header">
+                <h1>Account Dashboard</h1>
+                <p>View and manage your Discord account information</p>
+            </div>
+            
+            <div class="account-card">
+                <div class="account-section">
+                    <div class="account-section-title">
+                        <i class="fas fa-user-circle"></i> Account Information
+                    </div>
+                    <div class="account-info">
+                        <div class="account-avatar" id="account-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="account-details">
+                            <h2 id="account-username">Loading...</h2>
+                            <p id="account-id">Discord ID: Loading...</p>
+                            <div class="account-meta">
+                                <div class="account-meta-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span id="account-login-date">Login: Loading...</span>
+                                </div>
+                                <div class="account-meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="account-login-expiry">Expires: Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="login-status" id="login-status">
+                        <i class="fas fa-circle"></i> Checking login status...
+                    </div>
+                </div>
+                
+                <div class="account-section">
+                    <div class="account-section-title">
+                        <i class="fas fa-user-tag"></i> Your Discord Roles
+                    </div>
+                    <p>These roles determine what content you can access on the FSRP Document Portal.</p>
+                    <div class="roles-container" id="roles-container">
+                        <div class="role-badge">
+                            <i class="fas fa-spinner fa-spin"></i> Loading roles...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="account-section">
+                    <div class="account-section-title">
+                        <i class="fas fa-lock"></i> Access Permissions
+                    </div>
+                    <p>Based on your Discord roles, you have access to the following content:</p>
+                    <div class="permissions-list" id="permissions-list">
+                        <div class="permission-item">
+                            <div class="permission-icon">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <div class="permission-text">
+                                <h4>Checking permissions...</h4>
+                                <p>Please wait while we verify your access permissions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="account-section">
+                    <div class="account-section-title">
+                        <i class="fas fa-cog"></i> Account Actions
+                    </div>
+                    <div class="account-actions">
+                        <button class="account-btn account-btn-primary" id="refresh-btn">
+                            <i class="fas fa-sync-alt"></i> Refresh Account
+                        </button>
+                        <button class="account-btn account-btn-secondary" id="save-login-btn">
+                            <i class="fas fa-save"></i> <span id="save-login-text">Toggle Save Login</span>
+                        </button>
+                        <button class="account-btn account-btn-danger" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 - Sejed TRABELLSSI | Document Portal</p>
+                <p>Last updated: May 5, 2025</p>
+                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev <i class="fas fa-external-link-alt"></i></a></p>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="discord_popup.js"></script>
+    <script src="discord_auth.js"></script>
+    <script src="account.js"></script>
+</body>
+</html>

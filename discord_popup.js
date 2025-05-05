@@ -104,14 +104,38 @@ function showWelcomeNotification(username, roles) {
     // Clear any existing content
     notification.innerHTML = '';
     
+    // Reset notification style
+    resetNotificationStyle();
+    
     // Create role items HTML
     let rolesHTML = '';
     if (roles && roles.length > 0) {
         rolesHTML = '<div class="roles-list">';
         roles.forEach(role => {
-            rolesHTML += `<div class="role-item"><span class="role-icon"><i class="fas fa-check-circle"></i></span> ${role}</div>`;
+            // Determine role icon based on role name
+            let roleIcon = 'fas fa-check-circle';
+            let roleStyle = '';
+            
+            if (role.toLowerCase().includes('staff')) {
+                roleIcon = 'fas fa-shield-alt';
+                roleStyle = 'color: #4cc9f0;';
+            } else if (role.toLowerCase().includes('trainer')) {
+                roleIcon = 'fas fa-graduation-cap';
+                roleStyle = 'color: #f72585;';
+            } else if (role.toLowerCase().includes('admin')) {
+                roleIcon = 'fas fa-crown';
+                roleStyle = 'color: #ffd700;';
+            } else if (role.toLowerCase().includes('mod')) {
+                roleIcon = 'fas fa-gavel';
+                roleStyle = 'color: #4361ee;';
+            }
+            
+            rolesHTML += `<div class="role-item"><span class="role-icon" style="${roleStyle}"><i class="${roleIcon}"></i></span> ${role}</div>`;
         });
         rolesHTML += '</div>';
+    } else {
+        // If no roles, show default member role
+        rolesHTML = '<div class="roles-list"><div class="role-item"><span class="role-icon"><i class="fas fa-user"></i></span> Member</div></div>';
     }
     
     // Create notification content
@@ -125,6 +149,11 @@ function showWelcomeNotification(username, roles) {
             You have successfully logged in with Discord.
             ${rolesHTML}
         </div>
+        <div style="margin-top: 10px; font-size: 0.8rem; text-align: center;">
+            <a href="account.html" style="color: var(--primary-color); text-decoration: none;">
+                <i class="fas fa-user-cog"></i> View Account Dashboard
+            </a>
+        </div>
     `;
     
     // Show the notification
@@ -137,10 +166,10 @@ function showWelcomeNotification(username, roles) {
         hideNotification();
     });
     
-    // Auto hide after 8 seconds
+    // Auto hide after 10 seconds
     setTimeout(() => {
         hideNotification();
-    }, 8000);
+    }, 10000);
 }
 
 // Hide notification
