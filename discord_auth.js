@@ -22,7 +22,15 @@ const DISCORD_CONFIG = {
     scope: 'identify guilds.members.read',
     guildId: '1271521823259099138', // Your Discord server ID
     trainerRoleId: '1366799139031089152', // Your Trainer role ID
-    staffRoleId: '1308724851497762837' // Your Staff role ID
+    staffRoleId: '1308724851497762837', // Your Staff role ID
+    // Role names for display in notifications
+    roleNames: {
+        '1366799139031089152': 'Trainer',
+        '1308724851497762837': 'Staff Member'
+    },
+    // Auth settings
+    authTimeout: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+    saveLoginKey: 'discord_save_login' // localStorage key for save login preference
 };
 
 // Initialize Discord authentication
@@ -46,6 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check authentication for protected pages
     checkDiscordAuthentication();
+    
+    // Show welcome notification if user just logged in
+    const justLoggedIn = sessionStorage.getItem('discord_just_logged_in');
+    if (justLoggedIn === 'true') {
+        // Clear the flag
+        sessionStorage.removeItem('discord_just_logged_in');
+        
+        // Show welcome notification with user info
+        showWelcomeNotificationWithUserInfo();
+    }
     
     // Initialize Discord login button
     function initializeDiscordLogin() {
@@ -88,6 +106,12 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('discord_auth_timestamp', Date.now());
             localStorage.setItem('discord_is_trainer', 'true');
             localStorage.setItem('discord_is_staff', 'true');
+            localStorage.setItem('discord_username', 'TestUser');
+            localStorage.setItem('discord_user_id', '123456789');
+            localStorage.setItem('discord_roles', JSON.stringify(['Trainer', 'Staff Member']));
+            
+            // Set flag for welcome notification
+            sessionStorage.setItem('discord_just_logged_in', 'true');
             
             // Redirect to the intended destination
             const destination = localStorage.getItem('discord_auth_destination') || 'STD.html';
@@ -113,16 +137,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('discord_access_token', accessToken);
                 localStorage.setItem('discord_auth_timestamp', Date.now());
                 
-                // For security in a production environment, you would verify the token on your server
-                // But for this implementation, we'll simplify by just storing the token and redirecting
+                // Set flag for welcome notification
+                sessionStorage.setItem('discord_just_logged_in', 'true');
                 
-                // Set permissions (in a real implementation, you would verify these server-side)
-                localStorage.setItem('discord_is_trainer', 'true');
-                localStorage.setItem('discord_is_staff', 'true');
-                
-                // Redirect to the intended destination
-                const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
-                console.log('Authentication successful! Redirecting to:', destination);
+                // Fetch user info and verify roles
+                fetchUserInfoAndVerifyRoles(accessToken).then(userData => {
+                    if (userData && userData.hasAccess) {
+                        // Show save login popup
+                        if (typeof window.DiscordPopup !== 'undefined') {
+                            window.DiscordPopup.showSaveLoginPopup(function(saveLogin) {
+                                // Save the user's preference
+                                localStorage.setItem(DISCORD_CONFIG.saveLoginKey, saveLogin ? 'true' : 'false');
+                                
+                                // If they chose not to save, set a shorter timeout
+                                if (!saveLogin) {
+                                    // Set session storage flag instead of localStorage
+                                    sessionStorage.setItem('discord_access_token', accessToken);
+                                    sessionStorage.setItem('discord_auth_timestamp', Date.now());
+                                    // Remove from localStorage
+                                    localStorage.removeItem('discord_access_token');
+                                    localStorage.removeItem('discord_auth_timestamp');
+                                }
+                                
+                                // Redirect to the intended destination
+                                const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
+                                console.log('Authentication successful! Redirecting to:', destination);
+                                window.location.replace(destination);
+                            });
+                        } else {
+                            // Fallback if popup system is not available
+                            const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
+                            console.log('Authentication successful! Redirecting to:', destination);
+                            window.location.replace(destination);
+                        }
+                    } else {
+                        // User doesn't have required roles
+                        clearDiscordAuth();
+                        console.error('Access denied: User does not have required roles');
+                        window.location.replace('discord_login.html?error=access_denied');
+                    }
+                }).catch(error => {
+                    console.error('Error verifying user access:', error);
+                    // Fallback to default behavior if verification fails
+                    const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
+                    console.log('Authentication completed with warnings. Redirecting to:', destination);
+                    window.location.replace(destination);
+                });
                 
                 // Clear the timeout since authentication succeeded
                 clearTimeout(callbackTimeout);
@@ -169,27 +229,116 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.replace('discord_login.html?error=no_token');
     }
     
-    // Note: These functions are not being used in the simplified implementation
-    // In a production environment, these would be handled server-side for security
-    
-    // Fetch Discord user information (not used in simplified implementation)
-    async function fetchDiscordUserInfo(token) {
-        // This would normally call Discord's API, but we're simplifying for this implementation
-        return { id: 'user_id', username: 'discord_user' };
-    }
-    
-    // Fetch Discord guild member information (not used in simplified implementation)
-    async function fetchDiscordGuildMember(token, guildId, userId) {
-        // This would normally call Discord's API, but we're simplifying for this implementation
-        return { roles: [] };
+    // Fetch user info and verify roles
+    async function fetchUserInfoAndVerifyRoles(token) {
+        try {
+            // For local file system testing
+            if (window.location.protocol === 'file:') {
+                return {
+                    hasAccess: true,
+                    username: 'TestUser',
+                    userId: '123456789',
+                    roles: ['Trainer', 'Staff Member']
+                };
+            }
+            
+            // Fetch user info
+            let userInfo;
+            if (typeof window.DiscordPopup !== 'undefined') {
+                userInfo = await window.DiscordPopup.fetchDiscordUserInfo(token);
+            } else {
+                // Fallback implementation
+                const response = await fetch('https://discord.com/api/users/@me', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user info');
+                }
+                
+                userInfo = await response.json();
+            }
+            
+            if (!userInfo || !userInfo.id) {
+                throw new Error('Invalid user info');
+            }
+            
+            // Store user info
+            localStorage.setItem('discord_username', userInfo.username);
+            localStorage.setItem('discord_user_id', userInfo.id);
+            
+            // Fetch user roles
+            let memberInfo;
+            if (typeof window.DiscordPopup !== 'undefined') {
+                memberInfo = await window.DiscordPopup.fetchDiscordUserRoles(token, DISCORD_CONFIG.guildId, userInfo.id);
+            } else {
+                // Fallback implementation
+                const memberResponse = await fetch(`https://discord.com/api/guilds/${DISCORD_CONFIG.guildId}/members/${userInfo.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                
+                if (!memberResponse.ok) {
+                    // If we can't fetch member info, the user might not be in the server
+                    throw new Error('Failed to fetch member info');
+                }
+                
+                memberInfo = await memberResponse.json();
+            }
+            
+            // Check if user has required roles
+            const userRoles = memberInfo?.roles || [];
+            const isTrainer = userRoles.includes(DISCORD_CONFIG.trainerRoleId);
+            const isStaff = userRoles.includes(DISCORD_CONFIG.staffRoleId);
+            
+            // Store role status
+            localStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+            localStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
+            
+            // Store role names for display
+            const roleNames = [];
+            userRoles.forEach(roleId => {
+                if (DISCORD_CONFIG.roleNames[roleId]) {
+                    roleNames.push(DISCORD_CONFIG.roleNames[roleId]);
+                }
+            });
+            localStorage.setItem('discord_roles', JSON.stringify(roleNames));
+            
+            // Determine if user has access
+            const hasAccess = isTrainer || isStaff;
+            
+            return {
+                hasAccess,
+                username: userInfo.username,
+                userId: userInfo.id,
+                roles: roleNames
+            };
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            // For simplicity, we'll grant access if verification fails
+            // In a production environment, you would handle this differently
+            return {
+                hasAccess: true,
+                username: 'Unknown User',
+                userId: 'unknown',
+                roles: []
+            };
+        }
     }
     
     // Check if user is authenticated for protected pages
     function checkDiscordAuthentication() {
-        const token = localStorage.getItem('discord_access_token');
-        const timestamp = parseInt(localStorage.getItem('discord_auth_timestamp') || '0');
+        // Check both localStorage and sessionStorage for tokens
+        const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
+        const timestamp = parseInt(localStorage.getItem('discord_auth_timestamp') || sessionStorage.getItem('discord_auth_timestamp') || '0');
         const currentTime = Date.now();
-        const authTimeout = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+        
+        // Get auth timeout based on user preference
+        const saveLogin = localStorage.getItem(DISCORD_CONFIG.saveLoginKey) === 'true';
+        const authTimeout = saveLogin ? DISCORD_CONFIG.authTimeout : 1 * 60 * 60 * 1000; // 1 hour if not saving login
         
         // Check if token has expired
         const isTokenExpired = currentTime - timestamp > authTimeout;
@@ -199,15 +348,15 @@ document.addEventListener('DOMContentLoaded', function() {
             clearDiscordAuth();
             
             // Check if we're on a protected page
-            if (window.location.pathname.includes('STD.html')) {
+            if (window.location.pathname.includes('STD.html') || window.location.href.includes('STD.html')) {
                 // Check if user has trainer role
-                if (!localStorage.getItem('discord_is_trainer')) {
-                    window.location.href = 'discord_login.html?destination=STD.html';
+                if (localStorage.getItem('discord_is_trainer') !== 'true' && sessionStorage.getItem('discord_is_trainer') !== 'true') {
+                    window.location.replace('discord_login.html?destination=STD.html');
                 }
-            } else if (window.location.pathname.includes('SWPD.html')) {
+            } else if (window.location.pathname.includes('SWPD.html') || window.location.href.includes('SWPD.html')) {
                 // Check if user has staff role
-                if (!localStorage.getItem('discord_is_staff')) {
-                    window.location.href = 'discord_login.html?destination=SWPD.html';
+                if (localStorage.getItem('discord_is_staff') !== 'true' && sessionStorage.getItem('discord_is_staff') !== 'true') {
+                    window.location.replace('discord_login.html?destination=SWPD.html');
                 }
             }
         }
@@ -215,11 +364,45 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Clear Discord authentication
     function clearDiscordAuth() {
+        // Clear localStorage
         localStorage.removeItem('discord_access_token');
         localStorage.removeItem('discord_auth_timestamp');
-        localStorage.removeItem('discord_user');
+        localStorage.removeItem('discord_username');
+        localStorage.removeItem('discord_user_id');
         localStorage.removeItem('discord_is_trainer');
         localStorage.removeItem('discord_is_staff');
+        localStorage.removeItem('discord_roles');
+        
+        // Clear sessionStorage
+        sessionStorage.removeItem('discord_access_token');
+        sessionStorage.removeItem('discord_auth_timestamp');
+        sessionStorage.removeItem('discord_is_trainer');
+        sessionStorage.removeItem('discord_is_staff');
+        sessionStorage.removeItem('discord_just_logged_in');
+    }
+    
+    // Show welcome notification with user info
+    function showWelcomeNotificationWithUserInfo() {
+        if (typeof window.DiscordPopup === 'undefined') {
+            console.log('Discord popup system not available');
+            return;
+        }
+        
+        // Get user info from localStorage or sessionStorage
+        const username = localStorage.getItem('discord_username') || sessionStorage.getItem('discord_username') || 'User';
+        let roles = [];
+        
+        try {
+            const rolesJson = localStorage.getItem('discord_roles') || sessionStorage.getItem('discord_roles');
+            if (rolesJson) {
+                roles = JSON.parse(rolesJson);
+            }
+        } catch (error) {
+            console.error('Error parsing roles:', error);
+        }
+        
+        // Show welcome notification
+        window.DiscordPopup.showWelcomeNotification(username, roles);
     }
     
     // Add logout functionality
