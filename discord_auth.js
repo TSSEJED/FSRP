@@ -10,8 +10,15 @@
 // Discord OAuth2 Configuration
 const DISCORD_CONFIG = {
     clientId: '1368699324623749171', // Your Discord application client ID
-    // Use current origin for redirectUri to support both local and production environments
-    redirectUri: window.location.origin + '/discord_callback.html',
+    // Dynamically determine the redirect URI based on current location
+    get redirectUri() {
+        // For local file system, use the full file path
+        if (window.location.protocol === 'file:') {
+            return 'https://florida-state-roleplay.pages.dev/discord_callback.html';
+        }
+        // For web servers (http/https), use the current origin
+        return window.location.origin + '/discord_callback.html';
+    },
     scope: 'identify guilds.members.read',
     guildId: '1271521823259099138', // Your Discord server ID
     trainerRoleId: '1366799139031089152', // Your Trainer role ID
@@ -28,8 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeDiscordLogin();
     }
     
-    // Check if we're on the callback page
-    if (window.location.pathname.includes('discord_callback.html')) {
+    // Check if we're on the callback page - more robust check for both file:// and http(s):// protocols
+    const isCallbackPage = window.location.pathname.includes('discord_callback.html') || 
+                          window.location.href.includes('discord_callback.html');
+    
+    if (isCallbackPage) {
+        console.log('Detected callback page, current URL:', window.location.href);
         handleDiscordCallback();
     }
     
@@ -56,7 +67,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle the callback from Discord OAuth2
     function handleDiscordCallback() {
         console.log('Handling Discord callback');
+        console.log('Current URL:', window.location.href);
+        console.log('Protocol:', window.location.protocol);
+        console.log('Origin:', window.location.origin);
+        console.log('Pathname:', window.location.pathname);
         
+        // For local file system testing only - REMOVE IN PRODUCTION
+        // This is a workaround for local testing where OAuth won't actually work
+        if (window.location.protocol === 'file:') {
+            console.log('LOCAL TESTING MODE: Simulating successful authentication');
+            // Simulate successful authentication
+            localStorage.setItem('discord_access_token', 'local_test_token');
+            localStorage.setItem('discord_auth_timestamp', Date.now());
+            localStorage.setItem('discord_is_trainer', 'true');
+            localStorage.setItem('discord_is_staff', 'true');
+            
+            // Redirect to the intended destination
+            const destination = localStorage.getItem('discord_auth_destination') || 'STD.html';
+            console.log('Simulated authentication successful! Redirecting to:', destination);
+            
+            // Use timeout to ensure localStorage is updated before redirect
+            setTimeout(function() {
+                window.location.href = destination;
+            }, 500);
+            return;
+        }
+        
+        // Normal OAuth flow for web servers
         // Check for hash fragment (token is in URL hash)
         if (window.location.hash) {
             console.log('Hash fragment found:', window.location.hash);
