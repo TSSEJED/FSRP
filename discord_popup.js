@@ -6,8 +6,8 @@
  * including save login info popup and welcome notifications with user roles.
  */
 
-// Initialize the popup system
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize the popup system immediately
+(function() {
     console.log('%c Discord Popup System | Created by Sejed TRABELLSSI', 'background: #5865F2; color: white; padding: 8px; border-radius: 4px; font-weight: bold;');
     
     // Create popup container if it doesn't exist
@@ -18,6 +18,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Create notification container if it doesn't exist
+    if (!document.querySelector('.notification')) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        document.body.appendChild(notification);
+    }
+})();
+
+// Also add event listener for DOMContentLoaded to ensure elements are created
+document.addEventListener('DOMContentLoaded', function() {
+    // Double-check that containers exist
+    if (!document.querySelector('.popup-container')) {
+        const popupContainer = document.createElement('div');
+        popupContainer.className = 'popup-container';
+        document.body.appendChild(popupContainer);
+    }
+    
     if (!document.querySelector('.notification')) {
         const notification = document.createElement('div');
         notification.className = 'notification';
