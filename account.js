@@ -237,9 +237,11 @@ async function loadUserRoles() {
         let guildId = '';
         if (window.DISCORD_CONFIG && window.DISCORD_CONFIG.guildId) {
             guildId = window.DISCORD_CONFIG.guildId;
+            console.log('Using guild ID from DISCORD_CONFIG:', guildId);
         } else {
             // Fallback guild ID if DISCORD_CONFIG is not available
-            guildId = '1102648991167258735'; // Replace with your actual guild ID
+            guildId = '1271521823259099138'; // FSRP server ID
+            console.log('Using fallback guild ID:', guildId);
         }
         
         // First, fetch all roles in the guild to get their names and colors
@@ -387,59 +389,58 @@ async function loadUserRoles() {
         // Declare roles variable at this scope level so it's available throughout the catch block
         let roles = [];
         
-        // Try an alternative approach - fetch from discord_auth.js cached data
+        // Try an alternative approach - use stored role data
         try {
-            console.log('Attempting to use cached role data from discord_auth.js...');
+            console.log('Attempting to use stored role data...');
             
-            // Check if we have the Discord config available
-            if (window.DISCORD_CONFIG) {
-                // Clear roles container
-                rolesContainer.innerHTML = '';
+            // Clear roles container
+            rolesContainer.innerHTML = '';
+            
+            // Add default Member role
+            const memberBadge = document.createElement('div');
+            memberBadge.className = 'role-badge member';
+            memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
+            rolesContainer.appendChild(memberBadge);
+            
+            // Add roles based on stored flags
+            const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
+            const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
+            
+            console.log('Stored role flags - Trainer:', isTrainer, 'Staff:', isStaff);
+            
+            if (isTrainer) {
+                const trainerBadge = document.createElement('div');
+                trainerBadge.className = 'role-badge trainer';
+                trainerBadge.innerHTML = '<i class="fas fa-graduation-cap"></i> Trainer';
+                rolesContainer.appendChild(trainerBadge);
                 
-                // Add default Member role
-                const memberBadge = document.createElement('div');
-                memberBadge.className = 'role-badge member';
-                memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
-                rolesContainer.appendChild(memberBadge);
-                
-                // Add roles from DISCORD_CONFIG if the user has them
-                const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
-                const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
-                
-                if (isTrainer) {
-                    const trainerBadge = document.createElement('div');
-                    trainerBadge.className = 'role-badge trainer';
-                    trainerBadge.innerHTML = '<i class="fas fa-graduation-cap"></i> Trainer';
-                    rolesContainer.appendChild(trainerBadge);
-                    
-                    // Add to roles array for later use
-                    roles.push('Trainer');
-                }
-                
-                if (isStaff) {
-                    const staffBadge = document.createElement('div');
-                    staffBadge.className = 'role-badge staff';
-                    staffBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Staff Member';
-                    rolesContainer.appendChild(staffBadge);
-                    
-                    // Add to roles array for later use
-                    roles.push('Staff Member');
-                }
-                
-                // Add error badge
-                const errorBadge = document.createElement('div');
-                errorBadge.className = 'role-badge error';
-                errorBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Using cached roles';
-                rolesContainer.appendChild(errorBadge);
-                
-                // If we've added roles here, we don't need to continue to the forEach loop below
-                if (roles.length > 0) {
-                    return;
-                }
+                // Add to roles array for later use
+                roles.push('Trainer');
             }
             
-            // If we don't have DISCORD_CONFIG, fall back to stored roles data
-            throw new Error('DISCORD_CONFIG not available');
+            if (isStaff) {
+                const staffBadge = document.createElement('div');
+                staffBadge.className = 'role-badge staff';
+                staffBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Staff Member';
+                rolesContainer.appendChild(staffBadge);
+                
+                // Add to roles array for later use
+                roles.push('Staff Member');
+            }
+            
+            // Add note about using stored data
+            const noteBadge = document.createElement('div');
+            noteBadge.className = 'role-badge note';
+            noteBadge.innerHTML = '<i class="fas fa-info-circle"></i> Using stored roles';
+            rolesContainer.appendChild(noteBadge);
+            
+            // If we've added roles here, we don't need to continue to the forEach loop below
+            if (roles.length > 0) {
+                return;
+            }
+            
+            // If no roles were found, try to get them from localStorage
+            throw new Error('No stored role flags found');
         } catch (alternativeError) {
             console.error('Alternative approach failed:', alternativeError);
             
@@ -513,11 +514,11 @@ async function loadUserRoles() {
 async function loadUserPermissions() {
     const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
-    const permissionsContainer = document.getElementById('permissions-container');
+    const permissionsContainer = document.getElementById('permissions-list');
     
     // If permissions container doesn't exist, exit early
     if (!permissionsContainer) {
-        console.warn('Permissions container not found in the DOM');
+        console.warn('Permissions list not found in the DOM');
         return;
     }
     
