@@ -128,16 +128,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Optimize touch interactions for Android
     function optimizeTouchInteractions() {
         // Add touch feedback to buttons and links
-        const interactiveElements = document.querySelectorAll('button, a, .item, .section');
+        const interactiveElements = document.querySelectorAll('button, a, .item, .section, .card-btn, .document-card');
         interactiveElements.forEach(element => {
-            element.addEventListener('touchstart', function() {
-                this.style.opacity = '0.7';
-            });
+            // Remove any existing listeners to prevent duplicates
+            element.removeEventListener('touchstart', touchStartHandler);
+            element.removeEventListener('touchend', touchEndHandler);
+            element.removeEventListener('touchcancel', touchEndHandler);
             
-            element.addEventListener('touchend', function() {
-                this.style.opacity = '1';
-            });
+            // Add the event listeners
+            element.addEventListener('touchstart', touchStartHandler);
+            element.addEventListener('touchend', touchEndHandler);
+            element.addEventListener('touchcancel', touchEndHandler);
         });
+        
+        // Fix any double-tap zoom issues
+        const zoomDisableStyle = document.createElement('style');
+        zoomDisableStyle.innerHTML = `
+            a, button, .card-btn, .document-card {
+                touch-action: manipulation;
+            }
+        `;
+        document.head.appendChild(zoomDisableStyle);
+        
+        // Improve scrolling performance
+        document.body.style.webkitOverflowScrolling = 'touch';
+    }
+    
+    // Touch event handlers
+    function touchStartHandler() {
+        this.style.opacity = '0.7';
+        this.style.transform = 'scale(0.98)';
+    }
+    
+    function touchEndHandler() {
+        this.style.opacity = '1';
+        this.style.transform = 'scale(1)';
     }
     
     // Initialize the UI

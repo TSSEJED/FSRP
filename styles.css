@@ -1040,29 +1040,68 @@ footer p:last-child {
     
     body {
         padding: 10px;
+        -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
     }
     
     .container {
         border-radius: 6px;
         min-height: calc(100vh - 20px);
+        padding: 0 10px;
     }
     
     header {
         padding: 15px 10px;
+        flex-direction: column;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
     }
     
     .logo {
         width: 50px;
         height: 50px;
         font-size: 2rem;
+        margin-bottom: 10px;
     }
     
     .header-text h1 {
         font-size: 1.8rem;
     }
     
+    .author-badge {
+        position: relative;
+        transform: none;
+        margin-top: 10px;
+        right: auto;
+        top: auto;
+    }
+    
     .content {
         padding: 0;
+    }
+    
+    .document-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .document-card {
+        margin-bottom: 15px;
+    }
+    
+    .card-header {
+        padding: 15px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .card-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
     }
     
     footer {
@@ -1070,9 +1109,16 @@ footer p:last-child {
         font-size: 0.85rem;
     }
     
+    .footer-content {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+    
     /* Android-specific small phone styles */
     .android-message {
         padding: 15px 10px;
+        margin: 10px 0;
     }
     
     .android-header {
@@ -1087,8 +1133,14 @@ footer p:last-child {
         font-size: 1.6rem;
     }
     
+    .android-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
     .android-btn {
         padding: 15px 10px;
+        width: 100%;
     }
     
     .android-btn i {
@@ -1103,6 +1155,28 @@ footer p:last-child {
         font-size: 0.8rem;
         padding-top: 12px;
         margin-top: 15px;
+    }
+    
+    /* Improve form elements on mobile */
+    input, button, select, textarea {
+        font-size: 16px !important; /* Prevent zoom on focus in iOS */
+        max-width: 100%;
+    }
+    
+    /* Fix PDF container on mobile */
+    .pdf-container {
+        height: auto;
+        min-height: 300px;
+    }
+    
+    /* Improve loading indicator on mobile */
+    .loading-indicator {
+        padding: 10px;
+    }
+    
+    /* Fix scrolling issues */
+    .content {
+        -webkit-overflow-scrolling: touch;
     }
 }
 
