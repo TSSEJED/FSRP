@@ -72,12 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Origin:', window.location.origin);
         console.log('Pathname:', window.location.pathname);
         
-        // Add a timeout to prevent getting stuck if the bot is offline
+        // Add a shorter timeout to prevent getting stuck if the bot is offline
         const callbackTimeout = setTimeout(function() {
             console.error('Authentication timed out - bot may be offline');
             // Redirect to login page with error
-            window.location.href = 'discord_login.html?error=bot_offline';
-        }, 10000); // 10 second timeout
+            window.location.replace('discord_login.html?error=bot_offline');
+        }, 5000); // 5 second timeout
         
         // For local file system testing only - REMOVE IN PRODUCTION
         // This is a workaround for local testing where OAuth won't actually work
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Use timeout to ensure localStorage is updated before redirect
             setTimeout(function() {
-                window.location.href = destination;
+                window.location.replace(destination);
             }, 500);
             return;
         }
@@ -129,7 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Use timeout to ensure localStorage is updated before redirect
                 setTimeout(function() {
-                    window.location.href = destination;
+                    // Use replace instead of href for more reliable redirect
+                    window.location.replace(destination);
                 }, 500);
                 return;
             }
@@ -140,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Discord authentication error:', fragment.get('error_description'));
                 // Clear the timeout since we're handling an error
                 clearTimeout(callbackTimeout);
-                window.location.href = 'discord_login.html?error=' + error;
+                window.location.replace('discord_login.html?error=' + error);
                 return;
             }
         }
@@ -156,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Clear the timeout since we're handling an error
             clearTimeout(callbackTimeout);
-            window.location.href = 'discord_login.html?error=invalid_response';
+            window.location.replace('discord_login.html?error=invalid_response');
             return;
         }
         
@@ -165,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Clear the timeout since we're handling an error
         clearTimeout(callbackTimeout);
-        window.location.href = 'discord_login.html?error=no_token';
+        window.location.replace('discord_login.html?error=no_token');
     }
     
     // Note: These functions are not being used in the simplified implementation
