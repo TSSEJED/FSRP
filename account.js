@@ -6,6 +6,23 @@
  * displaying user information, roles, and permissions.
  */
 
+// Helper function to determine contrast color (black or white) based on background color
+function getContrastColor(hexColor) {
+    // Remove the # if it exists
+    hexColor = hexColor.replace('#', '');
+    
+    // Convert hex to RGB
+    const r = parseInt(hexColor.substr(0, 2), 16);
+    const g = parseInt(hexColor.substr(2, 2), 16);
+    const b = parseInt(hexColor.substr(4, 2), 16);
+    
+    // Calculate luminance - weights from WCAG 2.0
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return black for light colors, white for dark colors
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('%c Account Dashboard | Created by Sejed TRABELLSSI', 'background: #4361ee; color: white; padding: 8px; border-radius: 4px; font-weight: bold;');
     
@@ -19,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Initialize the account dashboard
-function initializeAccountDashboard() {
+async function initializeAccountDashboard() {
     // Check if user is logged in
     const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     
@@ -29,109 +46,538 @@ function initializeAccountDashboard() {
         return;
     }
     
-    // Load user information
-    loadUserInfo();
+    // Show loading state
+    document.getElementById('account-container').classList.add('loading');
+    document.getElementById('loading-overlay').style.display = 'flex';
     
-    // Load roles
-    loadUserRoles();
-    
-    // Load permissions
-    loadUserPermissions();
-    
-    // Update login status
-    updateLoginStatus();
-    
-    // Update save login button text
-    updateSaveLoginButton();
+    try {
+        // Load user information (async)
+        await loadUserInfo();
+        
+        // Load roles (async)
+        await loadUserRoles();
+        
+        // Load permissions (async)
+        await loadUserPermissions();
+        
+        // Update permissions list with document access information
+        updatePermissionsList();
+        
+        // Update login status
+        updateLoginStatus();
+        
+        // Update save login button text
+        updateSaveLoginButton();
+    } catch (error) {
+        console.error('Error initializing account dashboard:', error);
+        // Show error message
+        document.getElementById('account-container').innerHTML += `
+            <div class="error-message" style="margin-top: 20px;">
+                <i class="fas fa-exclamation-triangle"></i> Error loading account data: ${error.message}
+            </div>
+        `;
+    } finally {
+        // Hide loading overlay
+        document.getElementById('loading-overlay').style.display = 'none';
+        document.getElementById('account-container').classList.remove('loading');
+    }
 }
 
 // Load user information
-function loadUserInfo() {
-    const username = localStorage.getItem('discord_username') || sessionStorage.getItem('discord_username') || 'Unknown User';
-    const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id') || 'Unknown';
+async function loadUserInfo() {
+    const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
     const timestamp = parseInt(localStorage.getItem('discord_auth_timestamp') || sessionStorage.getItem('discord_auth_timestamp') || '0');
     
-    // Update username
-    document.getElementById('account-username').textContent = username;
+    // Show loading state
+    document.getElementById('account-username').textContent = 'Loading...';
+    document.getElementById('account-id').textContent = 'Loading user info...';
+    document.getElementById('account-avatar').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
-    // Update user ID
-    document.getElementById('account-id').textContent = 'Discord ID: ' + userId;
-    
-    // Update login date
-    const loginDate = new Date(timestamp);
-    document.getElementById('account-login-date').textContent = 'Login: ' + formatDate(loginDate);
-    
-    // Update login expiry
-    const saveLogin = localStorage.getItem('discord_save_login') === 'true';
-    const expiryDate = new Date(timestamp + (saveLogin ? 7 * 24 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000));
-    document.getElementById('account-login-expiry').textContent = 'Expires: ' + formatDate(expiryDate);
-    
-    // Update avatar with first letter of username
-    const avatarElement = document.getElementById('account-avatar');
-    if (username && username !== 'Unknown User') {
-        avatarElement.innerHTML = `<span>${username.charAt(0).toUpperCase()}</span>`;
+    try {
+        // Fetch user info directly from Discord API
+        const response = await fetch('https://discord.com/api/users/@me', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user info: ${response.status}`);
+        }
+        
+        const userData = await response.json();
+        console.log('User data fetched from Discord:', userData);
+        
+        // Update username
+        document.getElementById('account-username').textContent = userData.username;
+        
+        // Update user ID
+        document.getElementById('account-id').textContent = 'Discord ID: ' + userData.id;
+        
+        // Update avatar
+        const avatarElement = document.getElementById('account-avatar');
+        if (userData.avatar) {
+            // Use actual Discord avatar if available
+            avatarElement.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png" alt="${userData.username}">`;
+        } else {
+            // Fallback to first letter of username
+            avatarElement.innerHTML = `<span>${userData.username.charAt(0).toUpperCase()}</span>`;
+        }
+        
+        // Add additional user info if available
+        const userDetailsContainer = document.getElementById('user-details');
+        let additionalDetails = '';
+        
+        if (userData.email) {
+            additionalDetails += `<div class="detail-item"><i class="fas fa-envelope"></i> ${userData.email}</div>`;
+        }
+        
+        if (userData.verified !== undefined) {
+            additionalDetails += `<div class="detail-item"><i class="fas ${userData.verified ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${userData.verified ? 'Verified Account' : 'Unverified Account'}</div>`;
+        }
+        
+        if (userData.premium_type) {
+            const nitroTypes = ['None', 'Nitro Classic', 'Nitro', 'Nitro Basic'];
+            additionalDetails += `<div class="detail-item"><i class="fas fa-gem"></i> ${nitroTypes[userData.premium_type] || 'Nitro Subscriber'}</div>`;
+        }
+        
+        if (additionalDetails) {
+            userDetailsContainer.innerHTML += additionalDetails;
+        }
+        
+        // Store the updated user info
+        localStorage.setItem('discord_username', userData.username);
+        localStorage.setItem('discord_user_id', userData.id);
+        
+        // Update login date
+        const loginDate = new Date(timestamp);
+        document.getElementById('account-login-date').textContent = 'Login: ' + formatDate(loginDate);
+        
+        // Update login expiry
+        const saveLogin = localStorage.getItem('discord_save_login') === 'true';
+        const expiryDate = new Date(timestamp + (saveLogin ? 7 * 24 * 60 * 60 * 1000 : 1 * 60 * 60 * 1000));
+        document.getElementById('account-login-expiry').textContent = 'Expires: ' + formatDate(expiryDate);
+        
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        
+        // Fallback to stored data
+        const username = localStorage.getItem('discord_username') || sessionStorage.getItem('discord_username') || 'Unknown User';
+        const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id') || 'Unknown';
+        
+        document.getElementById('account-username').textContent = username;
+        document.getElementById('account-id').textContent = 'Discord ID: ' + userId;
+        
+        // Update avatar with first letter of username
+        const avatarElement = document.getElementById('account-avatar');
+        if (username && username !== 'Unknown User') {
+            avatarElement.innerHTML = `<span>${username.charAt(0).toUpperCase()}</span>`;
+        } else {
+            avatarElement.innerHTML = `<span>?</span>`;
+        }
+        
+        // Show error message
+        document.getElementById('user-details').innerHTML += `
+            <div class="detail-item error">
+                <i class="fas fa-exclamation-triangle"></i> Could not fetch live data from Discord
+            </div>
+        `;
     }
 }
 
 // Load user roles
-function loadUserRoles() {
+async function loadUserRoles() {
+    const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
+    const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
     const rolesContainer = document.getElementById('roles-container');
-    let rolesJson = localStorage.getItem('discord_roles') || sessionStorage.getItem('discord_roles');
-    let roles = [];
+    
+    // Show loading state
+    rolesContainer.innerHTML = `
+        <div class="role-badge loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading roles...
+        </div>
+    `;
     
     try {
-        if (rolesJson) {
-            roles = JSON.parse(rolesJson);
+        // Get the guild ID from DISCORD_CONFIG in discord_auth.js
+        let guildId = '';
+        if (window.DISCORD_CONFIG && window.DISCORD_CONFIG.guildId) {
+            guildId = window.DISCORD_CONFIG.guildId;
+        } else {
+            // Fallback guild ID if DISCORD_CONFIG is not available
+            guildId = '1102648991167258735'; // Replace with your actual guild ID
         }
+        
+        // First, fetch all roles in the guild to get their names and colors
+        const rolesResponse = await fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!rolesResponse.ok) {
+            throw new Error(`Failed to fetch guild roles: ${rolesResponse.status}`);
+        }
+        
+        const guildRoles = await rolesResponse.json();
+        console.log('Guild roles fetched from Discord:', guildRoles);
+        
+        // Create a map of role IDs to role objects
+        const roleMap = {};
+        guildRoles.forEach(role => {
+            roleMap[role.id] = role;
+        });
+        
+        // Now fetch the user's guild membership to get their roles
+        const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!memberResponse.ok) {
+            throw new Error(`Failed to fetch member info: ${memberResponse.status}`);
+        }
+        
+        const memberData = await memberResponse.json();
+        console.log('Member data fetched from Discord:', memberData);
+        
+        // Get user roles
+        const userRoleIds = memberData.roles || [];
+        
+        // Clear roles container
+        rolesContainer.innerHTML = '';
+        
+        // Check if user has any roles
+        if (userRoleIds.length === 0) {
+            rolesContainer.innerHTML = `
+                <div class="role-badge member">
+                    <i class="fas fa-user"></i> Member
+                </div>
+            `;
+            return;
+        }
+    
+        // Add each role
+        userRoleIds.forEach(roleId => {
+            const role = roleMap[roleId];
+            if (!role) return; // Skip if role not found
+            
+            // Skip @everyone role
+            if (role.name === '@everyone') return;
+            
+            // Determine role icon based on role name
+            let icon = 'fa-user';
+            let roleClass = 'member';
+            
+            if (role.name.toLowerCase().includes('staff')) {
+                icon = 'fa-shield-alt';
+                roleClass = 'staff';
+            } else if (role.name.toLowerCase().includes('trainer')) {
+                icon = 'fa-graduation-cap';
+                roleClass = 'trainer';
+            } else if (role.name.toLowerCase().includes('admin')) {
+                icon = 'fa-crown';
+                roleClass = 'admin';
+            } else if (role.name.toLowerCase().includes('moderator')) {
+                icon = 'fa-gavel';
+                roleClass = 'moderator';
+            } else if (role.name.toLowerCase().includes('developer')) {
+                icon = 'fa-code';
+                roleClass = 'developer';
+            } else if (role.name.toLowerCase().includes('vip')) {
+                icon = 'fa-star';
+                roleClass = 'vip';
+            }
+            
+            // Convert role color from decimal to hex
+            let roleColor = '#7289DA'; // Default Discord color
+            if (role.color !== 0) {
+                roleColor = '#' + role.color.toString(16).padStart(6, '0');
+            }
+            
+            // Create role badge
+            const roleBadge = document.createElement('div');
+            roleBadge.className = `role-badge ${roleClass}`;
+            roleBadge.style.backgroundColor = roleColor;
+            roleBadge.style.color = getContrastColor(roleColor);
+            roleBadge.innerHTML = `<i class="fas ${icon}"></i> ${role.name}`;
+            
+            // Add to container
+            rolesContainer.appendChild(roleBadge);
+        });
+        
+        // Store role names for other parts of the application
+        const roleNames = userRoleIds.map(id => roleMap[id]?.name).filter(name => name && name !== '@everyone');
+        localStorage.setItem('discord_roles', JSON.stringify(roleNames));
+        
     } catch (error) {
-        console.error('Error parsing roles:', error);
-    }
-    
-    // Clear roles container
-    rolesContainer.innerHTML = '';
-    
-    // Check if user has any roles
-    if (roles.length === 0) {
-        rolesContainer.innerHTML = `
-            <div class="role-badge member">
-                <i class="fas fa-user"></i> Member
-            </div>
-        `;
-        return;
-    }
-    
-    // Add each role
-    roles.forEach(role => {
-        let roleClass = 'member';
-        let roleIcon = 'fas fa-user';
+        console.error('Error fetching roles:', error);
         
-        // Determine role class and icon
-        if (role.toLowerCase().includes('staff')) {
-            roleClass = 'staff';
-            roleIcon = 'fas fa-shield-alt';
-        } else if (role.toLowerCase().includes('trainer')) {
-            roleClass = 'trainer';
-            roleIcon = 'fas fa-graduation-cap';
+        // Fallback to stored roles data
+        let rolesJson = localStorage.getItem('discord_roles') || sessionStorage.getItem('discord_roles');
+        let roles = [];
+        
+        try {
+            if (rolesJson) {
+                roles = JSON.parse(rolesJson);
+            }
+        } catch (parseError) {
+            console.error('Error parsing roles:', parseError);
         }
         
-        // Create role badge
-        const roleBadge = document.createElement('div');
-        roleBadge.className = `role-badge ${roleClass}`;
-        roleBadge.innerHTML = `<i class="${roleIcon}"></i> ${role}`;
+        // Clear roles container
+        rolesContainer.innerHTML = '';
         
-        // Add to container
-        rolesContainer.appendChild(roleBadge);
-    });
-    
-    // Always add Member role
-    const memberBadge = document.createElement('div');
-    memberBadge.className = 'role-badge member';
-    memberBadge.innerHTML = '<i class="fas fa-user"></i> Member';
-    rolesContainer.appendChild(memberBadge);
+        // Check if user has any roles
+        if (roles.length === 0) {
+            rolesContainer.innerHTML = `
+                <div class="role-badge member">
+                    <i class="fas fa-user"></i> Member
+                </div>
+                <div class="role-badge error">
+                    <i class="fas fa-exclamation-triangle"></i> Could not fetch live roles
+                </div>
+            `;
+            return;
+        }
+        
+        // Add each role from stored data
+        roles.forEach(role => {
+            // Determine role icon
+            let icon = 'fa-user';
+            let roleClass = 'member';
+            
+            if (role.toLowerCase().includes('staff')) {
+                icon = 'fa-shield-alt';
+                roleClass = 'staff';
+            } else if (role.toLowerCase().includes('trainer')) {
+                icon = 'fa-graduation-cap';
+                roleClass = 'trainer';
+            } else if (role.toLowerCase().includes('admin')) {
+                icon = 'fa-crown';
+                roleClass = 'admin';
+            } else if (role.toLowerCase().includes('moderator')) {
+                icon = 'fa-gavel';
+                roleClass = 'moderator';
+            }
+            
+            // Create role badge
+            const roleBadge = document.createElement('div');
+            roleBadge.className = `role-badge ${roleClass}`;
+            roleBadge.innerHTML = `<i class="fas ${icon}"></i> ${role}`;
+            
+            // Add to container
+            rolesContainer.appendChild(roleBadge);
+        });
+        
+        // Add error message
+        const errorBadge = document.createElement('div');
+        errorBadge.className = 'role-badge error';
+        errorBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Using cached data';
+        rolesContainer.appendChild(errorBadge);
+    }
 }
 
 // Load user permissions
-function loadUserPermissions() {
+async function loadUserPermissions() {
+    const token = localStorage.getItem('discord_access_token') || sessionStorage.getItem('discord_access_token');
+    const userId = localStorage.getItem('discord_user_id') || sessionStorage.getItem('discord_user_id');
+    const permissionsContainer = document.getElementById('permissions-container');
+    
+    // Show loading state
+    permissionsContainer.innerHTML = `
+        <div class="permission-item loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <div class="permission-details">
+                <h4>Loading Permissions</h4>
+                <p>Fetching your access rights...</p>
+            </div>
+        </div>
+    `;
+    
+    try {
+        // Get the guild ID and role IDs from DISCORD_CONFIG
+        let guildId = '';
+        let trainerRoleId = '';
+        let staffRoleId = '';
+        
+        if (window.DISCORD_CONFIG) {
+            guildId = window.DISCORD_CONFIG.guildId;
+            trainerRoleId = window.DISCORD_CONFIG.trainerRoleId;
+            staffRoleId = window.DISCORD_CONFIG.staffRoleId;
+        } else {
+            // Fallback IDs if DISCORD_CONFIG is not available
+            guildId = '1102648991167258735'; // Replace with your actual guild ID
+            trainerRoleId = '1102649088701075456'; // Replace with your actual trainer role ID
+            staffRoleId = '1102649088701075457'; // Replace with your actual staff role ID
+        }
+        
+        // Fetch the user's guild membership to get their roles
+        const memberResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (!memberResponse.ok) {
+            throw new Error(`Failed to fetch member info: ${memberResponse.status}`);
+        }
+        
+        const memberData = await memberResponse.json();
+        console.log('Member data for permissions:', memberData);
+        
+        // Get user roles
+        const userRoleIds = memberData.roles || [];
+        
+        // Check if user has trainer or staff roles
+        const isTrainer = userRoleIds.includes(trainerRoleId);
+        const isStaff = userRoleIds.includes(staffRoleId);
+        
+        // Store role status for other parts of the application
+        localStorage.setItem('discord_is_trainer', isTrainer ? 'true' : 'false');
+        localStorage.setItem('discord_is_staff', isStaff ? 'true' : 'false');
+        
+        // Clear permissions container
+        permissionsContainer.innerHTML = '';
+        
+        // Add permissions
+        if (isTrainer) {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="permission-details">
+                        <h4>Trainer Documents</h4>
+                        <p>You can access trainer-only documents</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item denied">
+                    <i class="fas fa-times-circle"></i>
+                    <div class="permission-details">
+                        <h4>Trainer Documents</h4>
+                        <p>You cannot access trainer-only documents</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (isStaff) {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="permission-details">
+                        <h4>Staff Documents</h4>
+                        <p>You can access staff-only documents</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item denied">
+                    <i class="fas fa-times-circle"></i>
+                    <div class="permission-details">
+                        <h4>Staff Documents</h4>
+                        <p>You cannot access staff-only documents</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add public documents permission (always allowed)
+        permissionsContainer.innerHTML += `
+            <div class="permission-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="permission-details">
+                    <h4>Public Documents</h4>
+                    <p>You can access public documents</p>
+                </div>
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error fetching permissions:', error);
+        
+        // Fallback to stored permissions
+        const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
+        const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';
+        
+        // Clear permissions container
+        permissionsContainer.innerHTML = '';
+        
+        // Add permissions from stored data
+        if (isTrainer) {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="permission-details">
+                        <h4>Trainer Documents</h4>
+                        <p>You can access trainer-only documents</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item denied">
+                    <i class="fas fa-times-circle"></i>
+                    <div class="permission-details">
+                        <h4>Trainer Documents</h4>
+                        <p>You cannot access trainer-only documents</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (isStaff) {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="permission-details">
+                        <h4>Staff Documents</h4>
+                        <p>You can access staff-only documents</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            permissionsContainer.innerHTML += `
+                <div class="permission-item denied">
+                    <i class="fas fa-times-circle"></i>
+                    <div class="permission-details">
+                        <h4>Staff Documents</h4>
+                        <p>You cannot access staff-only documents</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add public documents permission (always allowed)
+        permissionsContainer.innerHTML += `
+            <div class="permission-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="permission-details">
+                    <h4>Public Documents</h4>
+                    <p>You can access public documents</p>
+                </div>
+            </div>
+        `;
+        
+        // Add error message
+        permissionsContainer.innerHTML += `
+            <div class="permission-item error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="permission-details">
+                    <h4>Error Fetching Live Data</h4>
+                    <p>Using cached permissions data</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Update permissions list with document access information
+function updatePermissionsList() {
     const permissionsList = document.getElementById('permissions-list');
     const isTrainer = localStorage.getItem('discord_is_trainer') === 'true' || sessionStorage.getItem('discord_is_trainer') === 'true';
     const isStaff = localStorage.getItem('discord_is_staff') === 'true' || sessionStorage.getItem('discord_is_staff') === 'true';

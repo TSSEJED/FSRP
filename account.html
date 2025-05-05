@@ -20,6 +20,48 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
+            position: relative;
+        }
+        
+        /* Loading overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        #loading-overlay .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        #loading-overlay .loading-text {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .account-container.loading {
+            opacity: 0.7;
+            pointer-events: none;
         }
         
         .account-header {
@@ -307,6 +349,12 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Fetching your Discord data...</div>
+    </div>
+    
     <div class="container">
         <header>
             <div class="header-content">
@@ -321,7 +369,7 @@
             </div>
         </header>
         
-        <div class="account-container">
+        <div class="account-container" id="account-container">
             <div class="account-header">
                 <h1>Account Dashboard</h1>
                 <p>View and manage your Discord account information</p>
@@ -349,6 +397,7 @@
                                     <span id="account-login-expiry">Expires: Loading...</span>
                                 </div>
                             </div>
+                            <div id="user-details" class="account-meta" style="margin-top: 10px;"></div>
                         </div>
                     </div>
                     
