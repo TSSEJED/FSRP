@@ -10,7 +10,8 @@
 // Discord OAuth2 Configuration
 const DISCORD_CONFIG = {
     clientId: '1368699324623749171', // Your Discord application client ID
-    redirectUri: 'https://florida-state-roleplay.pages.dev/discord_callback.html', // Live website URL
+    // Use current origin for redirectUri to support both local and production environments
+    redirectUri: window.location.origin + '/discord_callback.html',
     scope: 'identify guilds.members.read',
     guildId: '1271521823259099138', // Your Discord server ID
     trainerRoleId: '1366799139031089152', // Your Trainer role ID
@@ -54,34 +55,62 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle the callback from Discord OAuth2
     function handleDiscordCallback() {
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-        const accessToken = fragment.get('access_token');
+        console.log('Handling Discord callback');
         
-        if (accessToken) {
-            // Store the token
-            localStorage.setItem('discord_access_token', accessToken);
-            localStorage.setItem('discord_auth_timestamp', Date.now());
+        // Check for hash fragment (token is in URL hash)
+        if (window.location.hash) {
+            console.log('Hash fragment found:', window.location.hash);
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const accessToken = fragment.get('access_token');
             
-            // For security in a production environment, you would verify the token on your server
-            // But for this implementation, we'll simplify by just storing the token and redirecting
+            if (accessToken) {
+                console.log('Access token found, processing authentication');
+                // Store the token
+                localStorage.setItem('discord_access_token', accessToken);
+                localStorage.setItem('discord_auth_timestamp', Date.now());
+                
+                // For security in a production environment, you would verify the token on your server
+                // But for this implementation, we'll simplify by just storing the token and redirecting
+                
+                // Set permissions (in a real implementation, you would verify these server-side)
+                localStorage.setItem('discord_is_trainer', 'true');
+                localStorage.setItem('discord_is_staff', 'true');
+                
+                // Redirect to the intended destination
+                const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
+                console.log('Authentication successful! Redirecting to:', destination);
+                
+                // Use timeout to ensure localStorage is updated before redirect
+                setTimeout(function() {
+                    window.location.href = destination;
+                }, 500);
+                return;
+            }
             
-            // Set permissions (in a real implementation, you would verify these server-side)
-            localStorage.setItem('discord_is_trainer', 'true');
-            localStorage.setItem('discord_is_staff', 'true');
-            
-            // Redirect to the intended destination
-            const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
-            console.log('Redirecting to:', destination);
-            window.location.href = destination;
-        } else if (fragment.get('error')) {
-            // Handle error
-            console.error('Discord authentication error:', fragment.get('error_description'));
-            window.location.href = 'discord_login.html?error=' + fragment.get('error');
-        } else {
-            // No token or error in URL, redirect to login
-            console.log('No token found in callback URL');
-            window.location.href = 'discord_login.html?error=no_token';
+            // Check for error in hash
+            const error = fragment.get('error');
+            if (error) {
+                console.error('Discord authentication error:', fragment.get('error_description'));
+                window.location.href = 'discord_login.html?error=' + error;
+                return;
+            }
         }
+        
+        // Check URL parameters (some OAuth implementations use query params instead of hash)
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            console.log('Authorization code found, but this implementation uses implicit flow');
+            // This implementation uses implicit flow with token in hash, not authorization code flow
+            // For a full implementation, you would exchange this code for a token on your server
+            window.location.href = 'discord_login.html?error=invalid_response';
+            return;
+        }
+        
+        // No token or error in URL, redirect to login
+        console.log('No authentication data found in callback URL');
+        window.location.href = 'discord_login.html?error=no_token';
     }
     
     // Note: These functions are not being used in the simplified implementation
