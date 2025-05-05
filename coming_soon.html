@@ -489,46 +489,7 @@
         </footer>
     </div>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user has already accessed the site
-            if (localStorage.getItem('fsrp_access') === 'granted') {
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            const accessForm = document.getElementById('access-form');
-            const errorMessage = document.getElementById('error-message');
-            
-            accessForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                const accessCode = document.getElementById('access-code').value.trim().toLowerCase();
-                const correctCode = 'sejed'; // Case-insensitive access code
-                
-                if (accessCode === correctCode) {
-                    // Grant access and store in localStorage
-                    localStorage.setItem('fsrp_access', 'granted');
-                    
-                    // Redirect to the main site
-                    window.location.href = 'index.html';
-                } else {
-                    // Show error message
-                    errorMessage.classList.add('show');
-                    
-                    // Clear the input field
-                    document.getElementById('access-code').value = '';
-                    
-                    // Focus on the input field
-                    document.getElementById('access-code').focus();
-                    
-                    // Remove the error message after 3 seconds
-                    setTimeout(function() {
-                        errorMessage.classList.remove('show');
-                    }, 3000);
-                }
-            });
-        });
-    </script>
+    <script src="android_compat.js"></script>
+    <script src="coming_soon_auth.js"></script>
 </body>
 </html>
