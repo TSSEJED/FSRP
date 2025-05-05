@@ -365,6 +365,12 @@
                     case 'server_error':
                         errorText.textContent = 'Server error. Please try again later.';
                         break;
+                    case 'bot_offline':
+                        errorText.textContent = 'The Discord bot is currently offline. Please try again later or contact an administrator.';
+                        break;
+                    case 'bot_status_check_failed':
+                        errorText.textContent = 'Unable to verify bot status. Please try again later.';
+                        break;
                     default:
                         errorText.textContent = 'An error occurred. Please try again.';
                 }

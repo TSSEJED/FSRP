@@ -72,6 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Origin:', window.location.origin);
         console.log('Pathname:', window.location.pathname);
         
+        // Add a timeout to prevent getting stuck if the bot is offline
+        const callbackTimeout = setTimeout(function() {
+            console.error('Authentication timed out - bot may be offline');
+            // Redirect to login page with error
+            window.location.href = 'discord_login.html?error=bot_offline';
+        }, 10000); // 10 second timeout
+        
         // For local file system testing only - REMOVE IN PRODUCTION
         // This is a workaround for local testing where OAuth won't actually work
         if (window.location.protocol === 'file:') {
@@ -117,6 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const destination = localStorage.getItem('discord_auth_destination') || 'index.html';
                 console.log('Authentication successful! Redirecting to:', destination);
                 
+                // Clear the timeout since authentication succeeded
+                clearTimeout(callbackTimeout);
+                
                 // Use timeout to ensure localStorage is updated before redirect
                 setTimeout(function() {
                     window.location.href = destination;
@@ -128,9 +138,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const error = fragment.get('error');
             if (error) {
                 console.error('Discord authentication error:', fragment.get('error_description'));
+                // Clear the timeout since we're handling an error
+                clearTimeout(callbackTimeout);
                 window.location.href = 'discord_login.html?error=' + error;
                 return;
             }
+            
+            // Check bot status
+            fetch('https://discord.com/api/guilds/' + DISCORD_CONFIG.guildId + '/widget.json')
+            .then(response => response.json())
+            .then(data => {
+                if (data.presence_count === 0) {
+                    console.error('Bot is offline');
+                    // Clear the timeout since we're handling an error
+                    clearTimeout(callbackTimeout);
+                    window.location.href = 'discord_login.html?error=bot_offline';
+                    return;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking bot status:', error);
+                // Clear the timeout since we're handling an error
+                clearTimeout(callbackTimeout);
+                window.location.href = 'discord_login.html?error=bot_status_check_failed';
+                return;
+            });
         }
         
         // Check URL parameters (some OAuth implementations use query params instead of hash)
@@ -141,12 +173,18 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Authorization code found, but this implementation uses implicit flow');
             // This implementation uses implicit flow with token in hash, not authorization code flow
             // For a full implementation, you would exchange this code for a token on your server
+            
+            // Clear the timeout since we're handling an error
+            clearTimeout(callbackTimeout);
             window.location.href = 'discord_login.html?error=invalid_response';
             return;
         }
         
         // No token or error in URL, redirect to login
         console.log('No authentication data found in callback URL');
+        
+        // Clear the timeout since we're handling an error
+        clearTimeout(callbackTimeout);
         window.location.href = 'discord_login.html?error=no_token';
     }
     
