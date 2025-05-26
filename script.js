@@ -1,293 +1,216 @@
-// Document ready function
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('%c Created by Sejed TRABELLSSI | sejed.pages.dev', 'background: #3a6ea5; color: white; padding: 8px; border-radius: 4px; font-weight: bold;');
+    // DOM Elements
+    const pdfEmbed = document.getElementById('pdf-embed');
+    const pdfIframe = document.getElementById('pdf-iframe');
+    const currentDocumentTitle = document.getElementById('current-document-title');
+    const themeToggle = document.querySelector('.theme-toggle');
+    const closeButton = document.getElementById('close-pdf');
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const quickAccessButtons = document.querySelectorAll('.quick-access-btn');
+    const fullTrainingBtn = document.getElementById('full-training-btn');
+    const warningPolicyBtn = document.getElementById('warning-policy-btn');
+    const trainerInfoBtn = document.getElementById('trainer-info-btn');
+    const trainerInfoQuickBtn = document.getElementById('trainer-info-quick-btn');
+    const joinGameBtn = document.getElementById('join-game-btn');
+    const openInBrowserLink = document.getElementById('open-in-browser');
     
-    // Elements
-    const pdfObject = document.getElementById('pdf-object');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const androidMessage = document.getElementById('android-message');
-    const mobileMessage = document.getElementById('mobile-message');
-    const desktopExperience = document.getElementById('desktop-experience');
-    
-    // PDF Control Buttons
-    const zoomInBtn = document.getElementById('zoom-in-btn');
-    const zoomOutBtn = document.getElementById('zoom-out-btn');
-    const zoomResetBtn = document.getElementById('zoom-reset-btn');
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    const printBtn = document.getElementById('print-btn');
-    const prevPageBtn = document.getElementById('prev-page');
-    const nextPageBtn = document.getElementById('next-page');
-    const currentPageSpan = document.getElementById('current-page');
-    const totalPagesSpan = document.getElementById('total-pages');
-    
-    // State variables
-    let currentZoom = 100;
-    let currentPage = 1;
-    let totalPages = 0;
-    let pdfDoc = null;
-    
-    // Device detection
-    function isAndroid() {
-        return /Android/i.test(navigator.userAgent);
-    }
-    
-    function isMobile() {
-        return window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    }
-    
-    // Initialize the UI based on device
-    function initializeUI() {
-        if (isAndroid()) {
-            // Show Android-specific message
-            androidMessage.style.display = 'block';
-            desktopExperience.style.display = 'none';
-            
-            // Add watermark for Android
-            addWatermark();
-        } else if (isMobile()) {
-            // Show mobile message for non-Android mobile devices
-            mobileMessage.style.display = 'block';
-            desktopExperience.style.display = 'block';
-            
-            // Add watermark for mobile
-            addWatermark();
+    // Theme Management
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const toggleBall = document.querySelector('.toggle-ball');
+        
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            toggleBall.style.transform = 'translateX(30px)';
         } else {
-            // Desktop experience
-            desktopExperience.style.display = 'flex';
-            
-            // Initialize PDF viewer features
-            initializePdfViewer();
+            toggleBall.style.transform = 'translateX(0)';
         }
     }
     
-    // Add watermark
-    function addWatermark() {
-        const watermark = document.createElement('div');
-        watermark.className = 'watermark';
-        watermark.innerHTML = 'Created by <a href="https://sejed.pages.dev" target="_blank">Sejed TRABELLSSI</a>';
-        document.body.appendChild(watermark);
+    // Initialize theme
+    initTheme();
+    
+    // Theme toggle functionality
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        
+        // Update the toggle ball position
+        const toggleBall = document.querySelector('.toggle-ball');
+        if (document.body.classList.contains('dark-mode')) {
+            toggleBall.style.transform = 'translateX(30px)';
+        } else {
+            toggleBall.style.transform = 'translateX(0)';
+        }
+    });
+    
+    // Check if device is mobile
+    function isMobileDevice() {
+        return (window.innerWidth <= 768) || 
+               (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     }
     
-    // Initialize PDF viewer
-    function initializePdfViewer() {
-        // Show loading indicator
-        loadingIndicator.style.display = 'block';
+    // Helper function to resolve relative PDF paths to absolute URLs
+    function getAbsolutePdfPath(relativePath) {
+        // Get the base URL of the current page (without the filename)
+        const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         
-        // Wait for PDF to load
-        pdfObject.addEventListener('load', function() {
-            // Hide loading indicator
-            loadingIndicator.style.display = 'none';
+        // If the path starts with '../', go up one directory
+        if (relativePath.startsWith('../')) {
+            // Remove the '../' and go up one directory in the baseUrl
+            const parentBaseUrl = baseUrl.substring(0, baseUrl.slice(0, -1).lastIndexOf('/') + 1);
             
-            // Try to get the PDF document from the object
-            try {
-                // This is a simplified approach - actual PDF.js implementation would be more robust
-                setTimeout(function() {
-                    // Set default values for demonstration
-                    currentPage = 1;
-                    totalPages = 10; // This would normally come from the PDF itself
-                    updatePageInfo();
-                    
-                    // Enable controls
-                    enableControls();
-                }, 1000);
-            } catch (error) {
-                console.error('Error loading PDF:', error);
+            // Get the filename part and properly encode it
+            const pathWithoutPrefix = relativePath.substring(3);
+            const lastSlashIndex = pathWithoutPrefix.lastIndexOf('/');
+            
+            if (lastSlashIndex !== -1) {
+                // If there are subdirectories in the path
+                const directory = pathWithoutPrefix.substring(0, lastSlashIndex + 1);
+                const filename = pathWithoutPrefix.substring(lastSlashIndex + 1);
+                return parentBaseUrl + directory + encodeURIComponent(filename);
+            } else {
+                // If it's just a filename
+                return parentBaseUrl + encodeURIComponent(pathWithoutPrefix);
+            }
+        }
+        
+        // Otherwise, just join the base URL and the properly encoded relative path
+        return baseUrl + encodeURIComponent(relativePath);
+    }
+    
+    // PDF Viewing Functions
+    function openPdfViewer(pdfUrl, title) {
+        
+        // For other PDF links
+        // Get the absolute path to the PDF
+        const absolutePdfUrl = getAbsolutePdfPath(pdfUrl);
+        
+        // For mobile devices, open PDF directly in a new tab
+        if (isMobileDevice()) {
+            window.open(absolutePdfUrl, '_blank');
+            return;
+        }
+        
+        // For desktop devices, continue with the embedded viewer
+        // Set the title in the viewer
+        currentDocumentTitle.textContent = title;
+        
+        // Show the PDF viewer
+        pdfEmbed.classList.remove('hidden');
+        
+        // Set iframe source to the PDF
+        // Make sure we're using the correct path format with proper encoding
+        try {
+            // Always use the absolute URL for PDFs when in the iframe
+            // This ensures it works both locally and when hosted online
+            pdfIframe.src = absolutePdfUrl;
+            
+            // For debugging
+            console.log('Setting PDF iframe source to:', absolutePdfUrl);
+        } catch (error) {
+            console.error('Error setting PDF iframe source:', error);
+            alert('There was an error loading the PDF. Please try again.');
+        }
+        
+        // Update the 'Open in Browser' link
+        if (openInBrowserLink) {
+            openInBrowserLink.href = absolutePdfUrl;
+        }
+        
+        console.log('Opening PDF:', absolutePdfUrl);
+    }
+
+    // Add click listeners to view buttons
+    viewButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const pdfUrl = button.getAttribute('data-pdf');
+            const title = button.getAttribute('data-title');
+            
+            if (pdfUrl && title) {
+                openPdfViewer(pdfUrl, title);
+            }
+        });
+    });
+    
+    // Close PDF viewer
+    closeButton.addEventListener('click', () => {
+        pdfEmbed.classList.add('hidden');
+        pdfIframe.src = '';
+    });
+    
+    // Quick access buttons
+    fullTrainingBtn.addEventListener('click', () => {
+        const pdfUrl = fullTrainingBtn.getAttribute('data-pdf');
+        const title = fullTrainingBtn.getAttribute('data-title');
+        if (pdfUrl && title) {
+            openPdfViewer(pdfUrl, title);
+        }
+    });
+    
+    warningPolicyBtn.addEventListener('click', () => {
+        const pdfUrl = warningPolicyBtn.getAttribute('data-pdf');
+        const title = warningPolicyBtn.getAttribute('data-title');
+        if (pdfUrl && title) {
+            openPdfViewer(pdfUrl, title);
+        }
+    });
+    
+    // Trainer Info button functionality
+    if (trainerInfoBtn) {
+        trainerInfoBtn.addEventListener('click', () => {
+            const pdfUrl = trainerInfoBtn.getAttribute('data-pdf');
+            const title = trainerInfoBtn.getAttribute('data-title');
+            if (pdfUrl && title) {
+                openPdfViewer(pdfUrl, title);
             }
         });
     }
     
-    // Update page information
-    function updatePageInfo() {
-        if (currentPageSpan && totalPagesSpan) {
-            currentPageSpan.textContent = currentPage;
-            totalPagesSpan.textContent = totalPages;
-        }
-    }
-    
-    // Enable controls
-    function enableControls() {
-        // Zoom controls
-        if (zoomInBtn) {
-            zoomInBtn.addEventListener('click', function() {
-                zoomIn();
-            });
-        }
-        
-        if (zoomOutBtn) {
-            zoomOutBtn.addEventListener('click', function() {
-                zoomOut();
-            });
-        }
-        
-        if (zoomResetBtn) {
-            zoomResetBtn.addEventListener('click', function() {
-                resetZoom();
-            });
-        }
-        
-        // Page navigation
-        if (prevPageBtn) {
-            prevPageBtn.addEventListener('click', function() {
-                goToPreviousPage();
-            });
-        }
-        
-        if (nextPageBtn) {
-            nextPageBtn.addEventListener('click', function() {
-                goToNextPage();
-            });
-        }
-        
-        // Fullscreen
-        if (fullscreenBtn) {
-            fullscreenBtn.addEventListener('click', function() {
-                toggleFullscreen();
-            });
-        }
-        
-        // Print
-        if (printBtn) {
-            printBtn.addEventListener('click', function() {
-                printPdf();
-            });
-        }
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', handleKeyboardShortcuts);
-    }
-    
-    // Zoom functions
-    function zoomIn() {
-        if (currentZoom < 200) {
-            currentZoom += 25;
-            applyZoom();
-        }
-    }
-    
-    function zoomOut() {
-        if (currentZoom > 50) {
-            currentZoom -= 25;
-            applyZoom();
-        }
-    }
-    
-    function resetZoom() {
-        currentZoom = 100;
-        applyZoom();
-    }
-    
-    function applyZoom() {
-        if (pdfObject) {
-            pdfObject.style.transform = `scale(${currentZoom / 100})`;
-            pdfObject.style.transformOrigin = 'center top';
-        }
-    }
-    
-    // Page navigation functions
-    function goToPreviousPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            updatePageInfo();
-            // In a real implementation, you would use PDF.js to change pages
-        }
-    }
-    
-    function goToNextPage() {
-        if (currentPage < totalPages) {
-            currentPage++;
-            updatePageInfo();
-            // In a real implementation, you would use PDF.js to change pages
-        }
-    }
-    
-    // Fullscreen toggle
-    function toggleFullscreen() {
-        const container = document.querySelector('.container');
-        
-        if (!document.fullscreenElement) {
-            if (container.requestFullscreen) {
-                container.requestFullscreen();
-            } else if (container.mozRequestFullScreen) {
-                container.mozRequestFullScreen();
-            } else if (container.webkitRequestFullscreen) {
-                container.webkitRequestFullscreen();
-            } else if (container.msRequestFullscreen) {
-                container.msRequestFullscreen();
+    // Trainer Info quick access button
+    if (trainerInfoQuickBtn) {
+        trainerInfoQuickBtn.addEventListener('click', () => {
+            const pdfUrl = trainerInfoQuickBtn.getAttribute('data-pdf');
+            const title = trainerInfoQuickBtn.getAttribute('data-title');
+            if (pdfUrl && title) {
+                openPdfViewer(pdfUrl, title);
             }
-            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
-        }
+        });
     }
     
-    // Print PDF
-    function printPdf() {
-        if (pdfObject) {
-            // Create a temporary iframe to print just the PDF
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = pdfObject.data;
-            document.body.appendChild(iframe);
-            
-            iframe.onload = function() {
-                iframe.contentWindow.print();
-                // Remove the iframe after printing
-                setTimeout(function() {
-                    document.body.removeChild(iframe);
-                }, 1000);
-            };
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (pdfEmbed.classList.contains('hidden')) return;
+        
+        if (e.key === 'Escape') {
+            pdfEmbed.classList.add('hidden');
+            pdfIframe.src = '';
         }
-    }
+    });
+
+    // Join Game button functionality
+    joinGameBtn.addEventListener('click', () => {
+        window.open('https://policeroleplay.community/join/AebBj', '_blank');
+    });
+
+    // Console Branding
+    console.log('%cFSRP Trainers Portal', 'color: #3a86ff; font-size: 20px; font-weight: bold;');
+    console.log('%cDesigned by Sejed TRABELLSSI | sejed.pages.dev', 'color: #8338ec; font-size: 12px;');
     
-    // Handle keyboard shortcuts
-    function handleKeyboardShortcuts(event) {
-        // Only process shortcuts if not in Android mode
-        if (androidMessage.style.display === 'none') {
-            switch (event.key) {
-                case 'ArrowLeft':
-                    goToPreviousPage();
-                    break;
-                case 'ArrowRight':
-                    goToNextPage();
-                    break;
-                case '+':
-                case '=': // For keyboards where + requires shift
-                    zoomIn();
-                    break;
-                case '-':
-                    zoomOut();
-                    break;
-                case '0':
-                    resetZoom();
-                    break;
-                case 'f':
-                    toggleFullscreen();
-                    break;
-                case 'p':
-                    if (event.ctrlKey) {
-                        event.preventDefault();
-                        printPdf();
-                    }
-                    break;
-            }
-        }
-    }
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        // Reinitialize UI on resize to handle orientation changes
-        initializeUI();
+    // Disable right-click
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
     });
     
-    // Initialize the UI
-    initializeUI();
+    // Disable keyboard shortcuts for saving, printing, etc.
+    document.addEventListener('keydown', function(e) {
+        // Prevent Ctrl+S, Ctrl+P, Ctrl+Shift+I
+        if ((e.ctrlKey && e.key === 's') || 
+            (e.ctrlKey && e.key === 'p') || 
+            (e.ctrlKey && e.shiftKey && e.key === 'i')) {
+            e.preventDefault();
+            return false;
+        }
+    });
 });

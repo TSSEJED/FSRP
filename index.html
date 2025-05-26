@@ -3,434 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Document Portal - Made by Sejed TRABELLSSI & only available for trainers.">
-    <meta name="theme-color" content="#4361ee">
-    <meta name="author" content="Sejed TRABELLSSI">
-    <title>Document Portal | Sejed TRABELLSSI</title>
+    <title>FSRP Trainers Portal</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="popup.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* Landing page specific styles */
-        .landing-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .landing-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 300px;
-            background: var(--gradient-primary);
-            filter: blur(120px);
-            opacity: 0.1;
-            border-radius: 50%;
-            z-index: -1;
-        }
-        
-        .landing-container::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 250px;
-            height: 250px;
-            background: var(--gradient-secondary);
-            filter: blur(100px);
-            opacity: 0.1;
-            border-radius: 50%;
-            z-index: -1;
-        }
-        
-        .document-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2.5rem;
-            justify-content: center;
-            margin-top: 4rem;
-        }
-        
-        .document-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--box-shadow);
-            width: 350px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
-        .document-card:hover {
-            transform: translateY(-12px);
-            box-shadow: var(--box-shadow-hover);
-        }
-        
-        .card-header {
-            padding: 2.5rem 1.5rem;
-            background: var(--gradient-primary);
-            color: white;
-            text-align: center;
-            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-            opacity: 0.3;
-            z-index: 0;
-        }
-        
-        .card-header i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            display: block;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-header h2 {
-            position: relative;
-            z-index: 1;
-            font-weight: 800;
-            font-size: 1.8rem;
-            margin-bottom: 0;
-            letter-spacing: -0.02em;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-body {
-            padding: 2rem;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
-        }
-        
-        .card-body p {
-            color: var(--text-color);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-            font-size: 1.05rem;
-        }
-        
-        .card-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 0.9rem 1.8rem;
-            background: var(--gradient-primary);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        .card-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
-            z-index: -1;
-        }
-        
-        .card-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-        }
-        
-        .card-btn i {
-            font-size: 1.1rem;
-            transition: var(--transition);
-        }
-        
-        .card-btn:hover i {
-            transform: scale(1.2);
-        }
-        
-        .landing-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .landing-header h1 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .landing-header h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--gradient-primary);
-            border-radius: 2px;
-        }
-        
-        .landing-header p {
-            font-size: 1.3rem;
-            color: var(--text-muted);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-        
-        .card-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 0.4rem 0.8rem;
-            border-radius: var(--border-radius-lg);
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: white;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-        }
-        
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            .document-card {
-                background: var(--card-bg-dark);
-                border-color: rgba(255, 255, 255, 0.05);
-            }
-            
-            .card-body {
-                background: linear-gradient(180deg, rgba(45, 55, 72, 0.9) 0%, rgba(45, 55, 72, 1) 100%);
-            }
-            
-            .card-body p {
-                color: rgba(255, 255, 255, 0.9);
-            }
-            
-            .card-badge {
-                background: rgba(0, 0, 0, 0.3);
-                color: white;
-            }
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .document-cards {
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
-            }
-            
-            .document-card {
-                width: 100%;
-                max-width: 400px;
-            }
-            
-            .landing-header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .landing-header p {
-                font-size: 1.1rem;
-                padding: 0 1rem;
-            }
-            
-            .landing-container {
-                padding: 2rem 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .landing-header h1 {
-                font-size: 2rem;
-            }
-            
-            .card-header i {
-                font-size: 3.5rem;
-            }
-            
-            .card-header h2 {
-                font-size: 1.6rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="logo.png" type="image/x-icon">
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-folder-open"></i>
+            <div class="logo-container">
+                <img src="logo.png" alt="FSRP Logo" class="logo">
+                <h1>FSRP Trainers Portal</h1>
+            </div>
+            <div class="header-actions">
+                <button id="join-game-btn" class="join-game-btn">
+                    <i class="fas fa-gamepad"></i> Join Game
+                </button>
+                <div class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <div class="toggle-ball"></div>
                 </div>
-                <div class="header-text">
-                    <h1>Document Portal</h1>
-                    <p>Access important documents - Digital Version</p>
-                </div>
-                <div class="header-actions" style="margin-left: auto; margin-right: 15px;">
-                    <a href="account.html" style="display: flex; align-items: center; color: var(--primary-color); text-decoration: none; font-weight: 500;">
-                        <i class="fas fa-user-circle" style="margin-right: 5px; font-size: 1.2rem;"></i> My Account
-                    </a>
-                </div>
-                <div class="author-badge">Created by Sejed TRABELLSSI</div>
             </div>
         </header>
-        
-        <div class="landing-container">
-            <div class="landing-header">
-                <h1>Welcome to the Document Portal</h1>
-                <p>Select one of the documents below to view its digital version. All documents are optimized for both PC and Android devices.</p>
-                <a href="https://policeroleplay.community/join/AebBj" class="quick-join-btn" target="_blank">
-                    <i class="fas fa-gamepad"></i> Quick Join Game
-                </a>
-                <a href="discord_login.html" class="discord-login-btn">
-                    <i class="fab fa-discord"></i> Login with Discord
-                </a>
-            </div>
-            
-            <style>
-                .quick-join-btn {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    background: linear-gradient(135deg, #4CAF50, #2E7D32);
-                    color: white;
-                    padding: 12px 24px;
-                    border-radius: 50px;
-                    font-weight: 600;
-                    text-decoration: none;
-                    margin-top: 20px;
-                    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-                    transition: all 0.3s ease;
-                }
+
+        <main>
+            <div class="document-section">
+                <h2><i class="fas fa-file-pdf"></i> Training Documents</h2>
+                <p>Welcome to the FSRP Trainers Portal. As a trainer, you have access to all training materials.</p>
                 
-                .quick-join-btn:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-                }
-                
-                .quick-join-btn i {
-                    font-size: 1.2em;
-                }
-                
-                .discord-login-btn {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    background: linear-gradient(135deg, #5865F2, #7289DA);
-                    color: white;
-                    padding: 12px 24px;
-                    border-radius: 50px;
-                    font-weight: 600;
-                    text-decoration: none;
-                    margin-top: 20px;
-                    margin-left: 15px;
-                    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
-                    transition: all 0.3s ease;
-                }
-                
-                .discord-login-btn:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
-                }
-                
-                .discord-login-btn i {
-                    font-size: 1.2em;
-                }
-                
-                @media (max-width: 768px) {
-                    .quick-join-btn, .discord-login-btn {
-                        display: block;
-                        width: 100%;
-                        margin-left: 0;
-                        text-align: center;
-                        margin-top: 10px;
-                    }
-                }
-            </style>
-            
-            <div class="document-cards">
-                <!-- Staff Training Document Card -->
-                <div class="document-card">
-                    <div class="card-badge">Training</div>
-                    <div class="card-header">
-                        <i class="fas fa-book"></i>
-                        <h2>Staff Training Document</h2>
+                <div class="document-cards">
+                    <div class="document-card">
+                        <div class="document-info">
+                            <h3><i class="fas fa-book"></i> Full Staff Training Document</h3>
+                            <p>Comprehensive training materials for staff members.</p>
+                            <div class="document-actions">
+                                <button class="view-btn" data-pdf="Full staff training document.pdf" data-title="Full Staff Training Document">
+                                    <i class="fas fa-eye"></i> View Document
+                                </button>
+                                <a href="Full staff training document.pdf" download class="download-btn mobile-only">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </a>
+                            </div>
+                            <div class="document-author">
+                                <small>Created by: <a href="https://sejed.pages.dev" target="_blank">Sejed TRABELLSSI</a></small>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p>Access the complete staff training document with all procedures, guidelines, and training materials.</p>
-                        <a href="login.html" class="card-btn">
-                            <i class="fas fa-eye"></i> View Document
-                        </a>
+                    
+                    <div class="document-card">
+                        <div class="document-info">
+                            <h3><i class="fas fa-graduation-cap"></i> Trainer Information Document</h3>
+                            <p>Essential information and guidelines for FSRP trainers.</p>
+                            <div class="document-actions">
+                                <button class="view-btn" data-pdf="Trainer Guide for FSRP (2).pdf" data-title="Trainer Information Document" id="trainer-info-btn">
+                                    <i class="fas fa-eye"></i> View Document
+                                </button>
+                                <a href="Trainer Guide for FSRP (2).pdf" download class="download-btn mobile-only">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </a>
+                            </div>
+                            <div class="document-author">
+                                <small>Created by: <a href="https://discord.com/users/1291368989070463011" target="_blank">Sadxx</a></small>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Staff Warning Policy Document Card -->
-                <div class="document-card">
-                    <div class="card-badge">Policy</div>
-                    <div class="card-header">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h2>Staff Warning Policy</h2>
-                    </div>
-                    <div class="card-body">
-                        <p>Access the staff warning policy document with guidelines on warnings, disciplinary procedures, and policies.</p>
-                        <a href="swpd_login.html" class="card-btn">
-                            <i class="fas fa-eye"></i> View Document
-                        </a>
+                    
+                    <div class="document-card">
+                        <div class="document-info">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Staff Warning Policy</h3>
+                            <p>Important warning policies that all staff must adhere to.</p>
+                            <div class="document-actions">
+                                <button class="view-btn" data-pdf="STAFF WARNING POLICY DOCUMENT.pdf" data-title="Staff Warning Policy">
+                                    <i class="fas fa-eye"></i> View Document
+                                </button>
+                                <a href="STAFF WARNING POLICY DOCUMENT.pdf" download class="download-btn mobile-only">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </a>
+                            </div>
+                            <div class="document-author">
+                                <small>Created by: <a href="https://discord.com/users/1291368989070463011" target="_blank">Sadxx</a></small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
+
+            <div id="pdf-embed" class="pdf-embed hidden">
+                <div class="pdf-header">
+                    <h3 id="current-document-title">Document Viewer</h3>
+                    <div class="pdf-controls">
+                        <div class="quick-access-menu">
+                            <button id="full-training-btn" class="quick-access-btn" data-pdf="Full staff training document.pdf" data-title="Full Staff Training Document">
+                                <i class="fas fa-book"></i> Training Doc
+                            </button>
+                            <button id="trainer-info-quick-btn" class="quick-access-btn" data-pdf="Trainer Guide for FSRP (2).pdf" data-title="Trainer Information Document">
+                                <i class="fas fa-graduation-cap"></i> Trainer Info
+                            </button>
+                            <button id="warning-policy-btn" class="quick-access-btn" data-pdf="STAFF WARNING POLICY DOCUMENT.pdf" data-title="Staff Warning Policy">
+                                <i class="fas fa-exclamation-triangle"></i> Warning Policy
+                            </button>
+                        </div>
+                        <div class="mobile-pdf-controls">
+                            <a id="open-in-browser" href="" target="_blank" class="mobile-pdf-btn">
+                                <i class="fas fa-external-link-alt"></i> Open in Browser
+                            </a>
+                        </div>
+                        <button id="close-pdf" class="close-btn"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="pdf-container">
+                    <iframe id="pdf-iframe" src="" frameborder="0"></iframe>
+                    <div id="mobile-pdf-message" class="mobile-pdf-message hidden">
+                        <i class="fas fa-mobile-alt"></i>
+                        <p>For better viewing on mobile devices, please use the "Open in Browser" option above.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
         <footer>
-            <div class="footer-content">
-                <p>&copy; 2025 - Sejed TRABELLSSI | Document Portal</p>
-                <p>Last updated: May 4, 2025</p>
-                <p class="website-link">Visit my website: <a href="https://sejed.pages.dev" target="_blank">sejed.pages.dev <i class="fas fa-external-link-alt"></i></a></p>
-            </div>
+            <p>&copy; 2025 FSRP | Designed by <a href="https://sejed.pages.dev" target="_blank">Sejed TRABELLSSI</a></p>
+            <div class="watermark">FSRP Trainers Portal</div>
         </footer>
     </div>
-    
-    <script src="redirect.js"></script>
-    <script src="android_compat.js"></script>
-    <script src="android_auth_check.js"></script>
-    <script src="discord_popup.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
